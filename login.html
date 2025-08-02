@@ -1,9 +1,38 @@
 <!DOCTYPE html>
-<html>
-    <head>
-
-    </head>
-    <body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Campus Cash Bank</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <img src="NwuLogo.png" alt="NWU Logo" class="logo">
+        <h1>Campus Cash Bank</h1>
         
-    </body>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="StudentNumber">Student Number</label>
+                <input type="text" id="StudentNumber" required>
+                <span class="error" id="StudentNumberError"></span>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+                <span class="error" id="passwordError"></span>
+            </div>
+            
+            <button type="submit" class="btn">Login</button>
+            
+            <div class="footer-links">
+                <a href="forgot_password.html">Forgot Password?</a>
+                
+            </div>
+        </form>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
 </html>
