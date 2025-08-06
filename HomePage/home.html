@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Cash Bank - Home</title>
+    <link rel="stylesheet" href="home.css"> <!-- Link to external CSS -->
+</head>
+<body>
+    <!-- Website Header with Navigation -->
+    <header class="site-header">
+        <div class="logo">Campus Cash Bank</div>
+        <nav class="top-nav">
+            <ul>
+                <li><a href="accountDetails.html">Account Details</a></li>
+                <li><a href="transactions.html">Transactions</a></li>
+                <li><a href="appointments.html">Appointments</a></li>
+                <li><a href="manageProfile.html">Manage Profile</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="support.html">Help & Support</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content Area (ONLY Account Details Visible) -->
+    <main class="content">
+        <!-- Account Details Section -->
+        <section id="accountDetails" class="section">
+            <h2>Account Details</h2>
+            <p>Account Type: Student Account</p>
+            <p>Account Number: 12345678</p>
+            <p>Balance: R0.00</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        &copy; 2025 Campus Cash Bank. Proudly Sponsored by NWU. All Rights Reserved.
+    </footer>
+
+    <script>
+        // Generate random 8-digit account number
+        const accountNumber = Math.floor(10000000 + Math.random() * 90000000);
+        document.querySelector('#accountDetails p:nth-child(3)').innerText = 'Account Number: ' + accountNumber;
+    </script>
+</body>
+</html>
