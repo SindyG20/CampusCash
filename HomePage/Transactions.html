@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Transaction History - Campus Cash Bank</title>
+  <link rel="stylesheet" href="Transactions.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Transaction History</h1>
+  </header>
+
+  <div class="container">
+
+    <div class="filter-bar">
+      <input type="date" id="filter-date" onchange="filterTable()" />
+      <select id="filter-type" onchange="filterTable()">
+        <option value="">All Types</option>
+        <option value="Deposit">Deposit</option>
+        <option value="Withdrawal">Withdrawal</option>
+        <option value="Transfer">Transfer</option>
+      </select>
+      <select id="filter-status" onchange="filterTable()">
+        <option value="">All Statuses</option>
+        <option value="Completed">Completed</option>
+        <option value="Pending">Pending</option>
+      </select>
+    </div>
+
+    <table id="transactionTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Amount (R)</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Counterparty</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2025-08-01</td>
+          <td>500.00</td>
+          <td>NSFAS Disbursement</td>
+          <td class="status-completed">Completed</td>
+          <td>NSFAS</td>
+          <td>Deposit</td>
+        </tr>
+        <tr>
+          <td>2025-08-03</td>
+          <td>120.00</td>
+          <td>Bookstore Purchase</td>
+          <td class="status-completed">Completed</td>
+          <td>Campus Bookstore</td>
+          <td>Withdrawal</td>
+        </tr>
+        <tr>
+          <td>2025-08-05</td>
+          <td>300.00</td>
+          <td>Transfer to roommate</td>
+          <td class="status-pending">Pending</td>
+          <td>John Mokoena</td>
+          <td>Transfer</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <script>
+    // Set max date (today) to prevent future selection
+    document.addEventListener("DOMContentLoaded", () => {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("filter-date").setAttribute("max", today);
+    });
+
+    function filterTable() {
+      const date = document.getElementById("filter-date").value;
+      const type = document.getElementById("filter-type").value;
+      const status = document.getElementById("filter-status").value;
+
+      const rows = document.querySelectorAll("#transactionTable tbody tr");
+
+      rows.forEach(row => {
+        const rowDate = row.cells[0].textContent;
+        const rowType = row.cells[5].textContent;
+        const rowStatus = row.cells[3].textContent;
+
+        let show = true;
+
+        if (date && !rowDate.includes(date)) show = false;
+        if (type && rowType !== type) show = false;
+        if (status && !rowStatus.includes(status)) show = false;
+
+        row.style.display = show ? "" : "none";
+      });
+    }
+  </script>
+
+</body>
+</html>
