@@ -12,6 +12,45 @@ body {
     min-height: 100vh;
 }
 
+.animated-hero {
+    position: relative;
+    height: 300px;
+    background: linear-gradient(-45deg, #a18cd1, #fbc2eb, #8ec5fc, #e0c3fc);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin: 40px 20px;
+    color: #222;
+    text-align: center;
+}
+
+.hero-overlay {
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+}
+
+.animated-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.3); /* Light overlay */
+    z-index: 0;
+    border-radius: 10px;
+    backdrop-filter: blur(3px);
+}
+
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+
+
 /* Header & Navigation Styles */
 .site-header {
     background: linear-gradient(to right, #6a11cb, #2575fc); /* Purple Gradient */
