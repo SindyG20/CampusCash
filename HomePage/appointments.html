@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Cash Bank - Appointments</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header.site-header {
+            background-color: #4b0082;
+            padding: 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .top-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .top-nav li {
+            margin-left: 20px;
+        }
+
+        .top-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .top-nav a:hover {
+            text-decoration: underline;
+        }
+
+        main.content {
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #4b0082;
+        }
+
+        /* Form styling */
+        .appointment-form {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .appointment-form label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .appointment-form input, .appointment-form select, .appointment-form button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        .appointment-form button {
+            background-color: #4b0082;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .appointment-form button:hover {
+            background-color: #3a0066;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4b0082;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f4f4f4;
+        }
+
+        /* Footer */
+        footer.footer {
+            background-color: #2c2c2c;
+            color: white;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1 1 200px;
+            margin: 10px 0;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 10px;
+        }
+
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        /* Chatbot Floating */
+        #chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4b0082;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 999;
+        }
+
+        #chatbot-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        #chatbot-header {
+            background-color: #4b0082;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #chatbot-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+
+        #chatbot-input {
+            display: flex;
+            border-top: 1px solid #ccc;
+        }
+
+        #chatbot-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+
+        #chatbot-input button {
+            background-color: #4b0082;
+            color: white;
+            border: none;
+            padding: 0 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="logo">Campus Cash Bank</div>
+        <nav class="top-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="#">Account</a></li>
+                <li><a href="#">Transactions</a></li>
+                <li><a href="appointments.html" class="active">Appointments</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main -->
+    <main class="content">
+        <section class="appointment-form">
+            <h2>Book an Appointment</h2>
+            <form id="appointmentForm">
+                <label for="studentName">Full Name</label>
+                <input type="text" id="studentName" required>
+
+                <label for="studentNumber">Student Number</label>
+                <input type="text" id="studentNumber" required>
+
+                <label for="appointmentDate">Date</label>
+                <input type="date" id="appointmentDate" required>
+
+                <label for="appointmentTime">Time</label>
+                <input type="time" id="appointmentTime" required>
+
+                <label for="purpose">Purpose</label>
+                <select id="purpose" required>
+                    <option value="">Select Purpose</option>
+                    <option value="Open Account">Open Account</option>
+                    <option value="Card Replacement">Card Replacement</option>
+                    <option value="Loan Inquiry">Loan Inquiry</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <button type="submit">Book Appointment</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Existing Appointments</h2>
+            <table id="appointmentsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Student No.</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Filled dynamically -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="home.html">Home</a>
+                <a href="#">Account</a>
+                <a href="Transactions.html">Transactions</a>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@campuscashbank.co.za</p>
+                <p>Phone: +27 12 345 6789</p>
+                <p>Location: NWU Potchefstroom, SA</p>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top: 20px;">
+            &copy; 2025 Campus Cash Bank. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <button id="chatbot-toggle">💬</button>
+    <div id="chatbot-container">
+        <div id="chatbot-header">Campus Cash Assistant</div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input">
+            <input type="text" id="chatbot-text" placeholder="Type your message...">
+            <button id="chatbot-send">Send</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Handle appointment booking
+        const appointmentForm = document.getElementById('appointmentForm');
+        const appointmentsTableBody = document.querySelector('#appointmentsTable tbody');
+        let appointments = [];
+
+        appointmentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const appointment = {
+                name: document.getElementById('studentName').value,
+                studentNumber: document.getElementById('studentNumber').value,
+                date: document.getElementById('appointmentDate').value,
+                time: document.getElementById('appointmentTime').value,
+                purpose: document.getElementById('purpose').value
+            };
+
+            appointments.push(appointment);
+            updateAppointmentsTable();
+
+            appointmentForm.reset();
+            alert('Appointment booked successfully!');
+        });
+
+        function updateAppointmentsTable() {
+            appointmentsTableBody.innerHTML = '';
+            appointments.forEach(app => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${app.name}</td>
+                    <td>${app.studentNumber}</td>
+                    <td>${app.date}</td>
+                    <td>${app.time}</td>
+                    <td>${app.purpose}</td>
+                `;
+                appointmentsTableBody.appendChild(row);
+            });
+        }
+
+        // Chatbot Toggle
+        const chatbotToggle = document.getElementById('chatbot-toggle');
+        const chatbotContainer = document.getElementById('chatbot-container');
+        chatbotToggle.addEventListener('click', () => {
+            chatbotContainer.style.display = chatbotContainer.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        // Chatbot Messaging
+        const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatbotSend = document.getElementById('chatbot-send');
+        const chatbotText = document.getElementById('chatbot-text');
+
+        function addMessage(sender, text) {
+            const msg = document.createElement('div');
+            msg.textContent = `${sender}: ${text}`;
+            chatbotMessages.appendChild(msg);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        chatbotSend.addEventListener('click', () => {
+            const text = chatbotText.value.trim();
+            if (!text) return;
+            addMessage('You', text);
+            chatbotText.value = '';
+
+            // Simple responses
+            setTimeout(() => {
+                let reply = "I can help with booking or viewing appointments.";
+                if (text.toLowerCase().includes('book')) {
+                    reply = "Fill in the form above to book your appointment.";
+                } else if (text.toLowerCase().includes('view')) {
+                    reply = "Your booked appointments are listed in the table below.";
+                }
+                addMessage('Bot', reply);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
