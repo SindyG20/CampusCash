@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Cash Bank - Transactions</title>
+    <link rel="stylesheet" href="Transactions.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="logo">Campus Cash Bank</div>
+        <nav class="top-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="#">Account</a></li>
+                <li><a href="transactions.html" class="active">Transactions</a></li>
+                <li><a href="appointments.html">Appointments</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="reports.html">Reports</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <section class="account-overview">
+            <div class="account-card">
+                <h3>Main Account</h3>
+                <p class="account-number">CCB-2025-4567</p>
+                <p class="account-balance">R1,245.50</p>
+            </div>
+            
+            <div class="account-card secondary">
+                <h3>Savings Account</h3>
+                <p class="account-number">CCB-2025-4568</p>
+                <p class="account-balance">R3,720.25</p>
+            </div>
+        </section>
+
+        <section class="transaction-interface">
+            <div class="transaction-tabs">
+                <button class="tab-btn active" data-transaction="deposit">Deposit</button>
+                <button class="tab-btn" data-transaction="withdraw">Withdraw</button>
+                <button class="tab-btn" data-transaction="transfer">Transfer</button>
+            </div>
+
+            <div class="transaction-forms">
+                <!-- Deposit Form -->
+                <form id="deposit-form" class="transaction-form active">
+                    <div class="form-group">
+                        <label for="deposit-account">To Account</label>
+                        <select id="deposit-account" required>
+                            <option value="main">Main Account</option>
+                            <option value="savings">Savings Account</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deposit-amount">Amount</label>
+                        <input type="number" id="deposit-amount" min="0.01" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deposit-method">Method</label>
+                        <select id="deposit-method" required>
+                            <option value="cash">Cash</option>
+                            <option value="check">Check</option>
+                            <option value="card">Debit/Credit Card</option>
+                            <option value="mobile">Mobile Payment</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Complete Deposit</button>
+                </form>
+
+                <!-- Withdrawal Form -->
+                <form id="withdraw-form" class="transaction-form">
+                    <div class="form-group">
+                        <label for="withdraw-account">From Account</label>
+                        <select id="withdraw-account" required>
+                            <option value="main">Main Account</option>
+                            <option value="savings">Savings Account</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="withdraw-amount">Amount</label>
+                        <input type="number" id="withdraw-amount" min="0.01" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="withdraw-method">Method</label>
+                        <select id="withdraw-method" required>
+                            <option value="cash">Cash</option>
+                            <option value="check">Check</option>
+                            <option value="atm">ATM Card</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Process Withdrawal</button>
+                </form>
+
+                <!-- Transfer Form -->
+                <form id="transfer-form" class="transaction-form">
+                    <div class="form-group">
+                        <label for="transfer-from">From Account</label>
+                        <select id="transfer-from" required>
+                            <option value="main">Main Account</option>
+                            <option value="savings">Savings Account</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transfer-to">To Account</label>
+                        <select id="transfer-to" required>
+                            <option value="savings">Savings Account</option>
+                            <option value="main">Main Account</option>
+                            <option value="external">External Account</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="external-account-group" style="display:none;">
+                        <label for="external-account">Account Number</label>
+                        <input type="text" id="external-account" placeholder="Enter account number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transfer-amount">Amount</label>
+                        <input type="number" id="transfer-amount" min="0.01" step="0.01" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Transfer Funds</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="transaction-history">
+            <h2>Recent Transactions</h2>
+            <div class="transaction-list">
+                <div class="transaction-item credit">
+                    <div class="transaction-details">
+                        <span class="transaction-type">Deposit</span>
+                        <span class="transaction-date">Aug 9, 2025</span>
+                    </div>
+                    <div class="transaction-amount">+R200.00</div>
+                </div>
+                
+                <div class="transaction-item debit">
+                    <div class="transaction-details">
+                        <span class="transaction-type">Withdrawal</span>
+                        <span class="transaction-date">Aug 8, 2025</span>
+                    </div>
+                    <div class="transaction-amount">-R50.00</div>
+                </div>
+                
+                <div class="transaction-item transfer">
+                    <div class="transaction-details">
+                        <span class="transaction-type">Transfer</span>
+                        <span class="transaction-date">Aug 6, 2025</span>
+                    </div>
+                    <div class="transaction-amount">-R100.00</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="home.html">Home</a>
+                <a href="#">Account</a>
+                <a href="transactions.html">Transactions</a>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@campuscashbank.co.za</p>
+                <p>Phone: +27 12 345 6789</p>
+                <p>Location: NWU Potchefstroom, SA</p>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top: 20px;">
+            &copy; 2025 Campus Cash Bank. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <button id="chatbot-toggle">💬</button>
+    <div id="chatbot-container">
+        <div id="chatbot-header">Campus Cash Assistant</div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input">
+            <input type="text" id="chatbot-text" placeholder="Type your message...">
+            <button id="chatbot-send">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const transactionForms = document.querySelectorAll('.transaction-form');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and forms
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                transactionForms.forEach(form => form.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Show corresponding form
+                const transactionType = button.getAttribute('data-transaction');
+                document.getElementById(`${transactionType}-form`).classList.add('active');
+            });
+        });
+
+        // Show external account field when needed
+        document.getElementById('transfer-to').addEventListener('change', function() {
+            const externalAccountGroup = document.getElementById('external-account-group');
+            externalAccountGroup.style.display = this.value === 'external' ? 'block' : 'none';
+        });
+
+        // Form submission handling
+        document.getElementById('deposit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Deposit processed successfully!');
+            // Add actual deposit logic here
+        });
+
+        document.getElementById('withdraw-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Withdrawal processed successfully!');
+            // Add actual withdrawal logic here
+        });
+
+        document.getElementById('transfer-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Transfer completed successfully!');
+            // Add actual transfer logic here
+        });
+
+        // Chatbot Toggle
+        const chatbotToggle = document.getElementById('chatbot-toggle');
+        const chatbotContainer = document.getElementById('chatbot-container');
+        chatbotToggle.addEventListener('click', () => {
+            chatbotContainer.style.display = chatbotContainer.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        // Chatbot Messaging
+        const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatbotSend = document.getElementById('chatbot-send');
+        const chatbotText = document.getElementById('chatbot-text');
+
+        function addMessage(sender, text) {
+            const msg = document.createElement('div');
+            msg.textContent = `${sender}: ${text}`;
+            chatbotMessages.appendChild(msg);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        chatbotSend.addEventListener('click', () => {
+            const text = chatbotText.value.trim();
+            if (!text) return;
+            addMessage('You', text);
+            chatbotText.value = '';
+
+            // Simple responses
+            setTimeout(() => {
+                let reply = "I can help with your banking transactions.";
+                if (text.toLowerCase().includes('deposit')) {
+                    reply = "Use the deposit form to add funds to your account.";
+                } else if (text.toLowerCase().includes('withdraw')) {
+                    reply = "Use the withdrawal form to take money out of your account.";
+                } else if (text.toLowerCase().includes('transfer')) {
+                    reply = "Use the transfer form to move money between accounts.";
+                }
+                addMessage('Bot', reply);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
