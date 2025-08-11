@@ -1,90 +1,396 @@
+/* Base Styles */
+:root {
+    --primary-color: #4b0082;
+    --secondary-color: #6a0dad;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --dark-color: #2c3e50;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f4f6f9;
-  margin: 0;
-  padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
 }
 
-header {
-  background-color: #1f4e79;
-  padding: 20px;
-  text-align: center;
-  color: white;
+/* Header Styles */
+.site-header {
+    background-color: var(--primary-color);
+    padding: 20px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-h1 {
-  margin: 0;
-  font-size: 26px;
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
-.container {
-  max-width: 1000px;
-  margin: 30px auto;
-  padding: 20px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+.top-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
 }
 
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 20px;
-  justify-content: center;
+.top-nav li {
+    margin-left: 20px;
 }
 
-.filter-bar input,
-.filter-bar select {
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  min-width: 160px;
+.top-nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+.top-nav a:hover {
+    text-decoration: underline;
 }
 
-th, td {
-  padding: 14px;
-  border-bottom: 1px solid #e0e0e0;
-  text-align: center;
+.top-nav a.active {
+    font-weight: bold;
+    text-decoration: underline;
 }
 
-th {
-  background-color: #1f4e79;
-  color: white;
+/* Main Content Layout */
+.content {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: auto;
 }
 
-tr:hover {
-  background-color: #f1f1f1;
+h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
 }
 
-.status-completed {
-  color: green;
-  font-weight: bold;
+/* Account Overview */
+.account-overview {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
 }
 
-.status-pending {
-  color: #ff8c00;
-  font-weight: bold;
+.account-card {
+    flex: 1;
+    min-width: 250px;
+    padding: 20px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    text-align: center;
 }
 
-@media (max-width: 768px) {
-  .filter-bar {
+.account-card.secondary {
+    background-color: var(--light-color);
+}
+
+.account-balance {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 10px 0;
+    color: var(--primary-color);
+}
+
+.account-number {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Transaction Interface */
+.transaction-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--light-color);
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #666;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+.transaction-forms {
+    background-color: white;
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.transaction-form {
+    display: none;
+}
+
+.transaction-form.active {
+    display: block;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: border 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Transaction History */
+.transaction-history {
+    margin-top: 40px;
+}
+
+.transaction-list {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-details {
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
-  }
+}
 
-  th, td {
-    font-size: 13px;
-  }
+.transaction-type {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.transaction-date {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.transaction-amount {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.credit .transaction-amount {
+    color: var(--success-color);
+}
+
+.debit .transaction-amount {
+    color: var(--danger-color);
+}
+
+.transfer .transaction-amount {
+    color: var(--warning-color);
+}
+
+/* Footer */
+.footer {
+    background-color: #2c2c2c;
+    color: white;
+    padding: 30px 20px;
+    margin-top: 40px;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.footer-section {
+    flex: 1 1 200px;
+    margin: 10px 0;
+}
+
+.footer-section h4 {
+    margin-bottom: 10px;
+}
+
+.footer-section a {
+    color: #ccc;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.footer-section a:hover {
+    color: white;
+}
+
+/* Chatbot */
+#chatbot-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 999;
+}
+
+#chatbot-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    height: 450px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 999;
+}
+
+#chatbot-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#chatbot-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+}
+
+#chatbot-input {
+    display: flex;
+    border-top: 1px solid #ccc;
+}
+
+#chatbot-input input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+}
+
+#chatbot-input button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0 15px;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .account-overview {
+        flex-direction: column;
+    }
+    
+    .transaction-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab-btn {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .site-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .top-nav ul {
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .top-nav li {
+        margin: 5px 10px;
+    }
+
+    #chatbot-container {
+        width: 90%;
+        right: 5%;
+    }
 }

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Transaction History - Campus Cash Bank</title>
+  <link rel="stylesheet" href="reports.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="logo">Campus Cash Bank</div>
+    <nav class="top-nav">
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="#">Account</a></li>
+        <li><a href="#" class="active">Transactions</a></li>
+        <li><a href="appointments.html">Appointments</a></li>
+        <li><a href="#">Profile</a></li>
+        <li><a href="reports.html">Reports</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="content">
+    <section class="transaction-container">
+      <h2>Transaction History</h2>
+
+      <div class="filter-bar">
+        <input type="date" id="filter-date" onchange="filterTable()" />
+        <select id="filter-type" onchange="filterTable()">
+          <option value="">All Types</option>
+          <option value="Deposit">Deposit</option>
+          <option value="Withdrawal">Withdrawal</option>
+          <option value="Transfer">Transfer</option>
+        </select>
+        <select id="filter-status" onchange="filterTable()">
+          <option value="">All Statuses</option>
+          <option value="Completed">Completed</option>
+          <option value="Pending">Pending</option>
+        </select>
+      </div>
+
+      <table id="transactionTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount (R)</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Counterparty</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-08-01</td>
+            <td>500.00</td>
+            <td>NSFAS Disbursement</td>
+            <td class="status-completed">Completed</td>
+            <td>NSFAS</td>
+            <td>Deposit</td>
+          </tr>
+          <tr>
+            <td>2025-08-03</td>
+            <td>120.00</td>
+            <td>Bookstore Purchase</td>
+            <td class="status-completed">Completed</td>
+            <td>Campus Bookstore</td>
+            <td>Withdrawal</td>
+          </tr>
+          <tr>
+            <td>2025-08-05</td>
+            <td>300.00</td>
+            <td>Transfer to roommate</td>
+            <td class="status-pending">Pending</td>
+            <td>John Mokoena</td>
+            <td>Transfer</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <a href="home.html">Home</a>
+        <a href="#">Account</a>
+        <a href="transactions.html">Transactions</a>
+      </div>
+      <div class="footer-section">
+        <h4>Contact Us</h4>
+        <p>Email: support@campuscashbank.co.za</p>
+        <p>Phone: +27 12 345 6789</p>
+        <p>Location: NWU Potchefstroom, SA</p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top: 20px;">
+      &copy; 2025 Campus Cash Bank. All Rights Reserved.
+    </div>
+  </footer>
+
+  <!-- Chatbot -->
+  <button id="chatbot-toggle" aria-label="Toggle Chatbot">💬</button>
+  <div id="chatbot-container">
+    <div id="chatbot-header">Campus Cash Assistant</div>
+    <div id="chatbot-messages"></div>
+    <div id="chatbot-input">
+      <input type="text" id="chatbot-text" placeholder="Type your message..." aria-label="Chat input"/>
+      <button id="chatbot-send">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // Set max date (today) to prevent future selection
+    document.addEventListener("DOMContentLoaded", () => {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("filter-date").setAttribute("max", today);
+    });
+
+    function filterTable() {
+      const date = document.getElementById("filter-date").value;
+      const type = document.getElementById("filter-type").value;
+      const status = document.getElementById("filter-status").value;
+
+      const rows = document.querySelectorAll("#transactionTable tbody tr");
+
+      rows.forEach(row => {
+        const rowDate = row.cells[0].textContent;
+        const rowType = row.cells[5].textContent;
+        const rowStatus = row.cells[3].textContent;
+
+        let show = true;
+
+        if (date && !rowDate.includes(date)) show = false;
+        if (type && rowType !== type) show = false;
+        if (status && !rowStatus.includes(status)) show = false;
+
+        row.style.display = show ? "" : "none";
+      });
+    }
+
+    // Chatbot toggle and messaging
+    const chatbotToggle = document.getElementById('chatbot-toggle');
+    const chatbotContainer = document.getElementById('chatbot-container');
+    const chatbotMessages = document.getElementById('chatbot-messages');
+    const chatbotSend = document.getElementById('chatbot-send');
+    const chatbotText = document.getElementById('chatbot-text');
+
+    chatbotToggle.addEventListener('click', () => {
+      if (chatbotContainer.style.display === 'flex') {
+        chatbotContainer.style.display = 'none';
+      } else {
+        chatbotContainer.style.display = 'flex';
+        chatbotText.focus();
+      }
+    });
+
+    function addMessage(sender, text) {
+      const msg = document.createElement('div');
+      msg.textContent = `${sender}: ${text}`;
+      chatbotMessages.appendChild(msg);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    chatbotSend.addEventListener('click', () => {
+      const text = chatbotText.value.trim();
+      if (!text) return;
+      addMessage('You', text);
+      chatbotText.value = '';
+
+      // Basic bot response
+      setTimeout(() => {
+        let reply = "I can help you with your transactions or general inquiries.";
+        if (text.toLowerCase().includes('filter')) {
+          reply = "Use the filters above the table to sort your transactions by date, type, or status.";
+        } else if (text.toLowerCase().includes('help')) {
+          reply = "Feel free to ask about your transactions or how to use Campus Cash Bank.";
+        }
+        addMessage('Bot', reply);
+      }, 500);
+    });
+
+    // Optional: Send message on Enter key in input
+    chatbotText.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        chatbotSend.click();
+      }
+    });
+  </script>
+
+</body>
+</html>
