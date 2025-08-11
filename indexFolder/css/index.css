@@ -32,6 +32,9 @@ body {
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   color: #6a11cb;
   font-size: 26px;
   font-weight: bold;
@@ -111,4 +114,13 @@ body {
   color: #888;
   margin-top: auto;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+}
+
+/* Image Fix */
+img {
+  max-width: 100px; /* limit size */
+  width: 100%; /* responsive scaling */
+  height: auto; /* keep proportions */
+  display: block;
+  margin: 0 auto; /* center image */
 }
