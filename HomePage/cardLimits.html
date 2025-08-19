@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Campus Cash - Card Limit</title>
+  <style>
+    :root{
+      --bg:#f5f3ff;
+      --card:#ffffff;
+      --accent:#7c3aed;
+      --accent-light:#a78bfa;
+      --muted:#6b21a8;
+      --danger:#dc2626;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg); color:#1f2937; min-height:100vh;
+      display:flex; justify-content:center; padding:24px;
+    }
+    .container{width:100%; max-width:980px}
+    header{display:flex; align-items:center; justify-content:space-between; margin-bottom:24px}
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{
+      width:44px; height:44px; border-radius:8px; background:linear-gradient(135deg,#7c3aed,#a78bfa);
+      display:flex; align-items:center; justify-content:center; color:white; font-weight:700;
+    }
+    nav a{margin-left:12px; text-decoration:none; color:var(--muted)}
+    .card{
+      background:var(--card); border-radius:12px; padding:28px;
+      box-shadow:0 8px 30px rgba(124,58,237,0.2); margin-bottom:20px;
+    }
+    h1,h2{color:var(--accent); margin-top:0}
+    label{font-weight:600; color:var(--muted); display:block; margin-top:16px; margin-bottom:6px}
+    input{
+      width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; font-size:15px;
+    }
+    .btn{
+      display:inline-block; padding:10px 16px; border-radius:8px; text-decoration:none; cursor:pointer;
+      font-weight:600; border:0; margin-top:20px;
+    }
+    .btn-primary{background:var(--accent); color:white}
+    .btn-outline{background:transparent; border:1px solid var(--accent-light); color:var(--accent)}
+    .limit-info{
+      background:#fafafa; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-top:20px;
+    }
+    .limit-info p{margin:6px 0; color:#4b5563}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">CC</div>
+        <div>
+          <div style="font-weight:700;color:var(--muted)">Campus Cash</div>
+          <div style="font-size:13px;color:var(--accent-light)">Student banking simplified</div>
+        </div>
+      </div>
+      <nav>
+        <a href="home.html">Dashboard</a>
+        <a href="cardSettings.html">Card Settings</a>
+        <a href="logOut.html">Log out</a>
+      </nav>
+    </header>
+
+    <main class="card" role="main" aria-labelledby="title">
+      <h1 id="title">Card Limits</h1>
+      <p style="color:#4b5563">Set or update your spending and withdrawal limits for added security and control.</p>
+
+      <div class="limit-info">
+        <h2>Current Limits</h2>
+        <p><strong>Daily Spending Limit:</strong> R5,000</p>
+        <p><strong>Daily Withdrawal Limit:</strong> R2,000</p>
+      </div>
+
+      <form id="limitForm">
+        <label for="spendLimit">New Daily Spending Limit (R)</label>
+        <input type="number" id="spendLimit" name="spendLimit" min="100" max="20000" placeholder="e.g. 6000" required>
+
+        <label for="withdrawLimit">New Daily Withdrawal Limit (R)</label>
+        <input type="number" id="withdrawLimit" name="withdrawLimit" min="100" max="10000" placeholder="e.g. 2500" required>
+
+        <button type="submit" class="btn btn-primary">Update Limits</button>
+        <button type="reset" class="btn btn-outline">Reset</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    const form = document.getElementById("limitForm");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const spend = document.getElementById("spendLimit").value;
+      const withdraw = document.getElementById("withdrawLimit").value;
+
+      alert(`✅ Your new limits have been saved!\n\nSpending: R${spend}\nWithdrawal: R${withdraw}`);
+
+      // TODO: Send limits to backend via fetch
+      // fetch('/api/update-limits', { method:'POST', body: JSON.stringify({ spend, withdraw }) })
+    });
+  </script>
+</body>
+</html>
