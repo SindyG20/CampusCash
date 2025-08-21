@@ -1,0 +1,79 @@
+/* General page style */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header with centered title */
+header {
+  background-color: #1f4e79;
+  padding: 25px;
+  text-align: center;   /* 👈 Centers the title */
+  color: white;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+/* Card container for the form */
+.container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Form layout */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Labels */
+form label {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Inputs & Textarea */
+form input,
+form textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Focus state */
+form input:focus,
+form textarea:focus {
+  border-color: #1f4e79;
+  box-shadow: 0 0 5px rgba(31, 78, 121, 0.4);
+  outline: none;
+}
+
+/* Submit button */
+form button {
+  background-color: #1f4e79;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+form button:hover {
+  background-color: #16395a;
+}
