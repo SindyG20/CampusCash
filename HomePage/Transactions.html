@@ -18,6 +18,7 @@
                 <li><a href="appointments.html">Appointments</a></li>
                 <li><a href="profile.html">Profile</a></li>
                 <li><a href="reports.html">Reports</a></li>
+                <li><a href="report-lost.html">Report Lost/Stolen</a></li> 
             </ul>
         </nav>
     </header>
@@ -173,6 +174,8 @@
                 <a href="home.html">Home</a>
                 <a href="#">Account</a>
                 <a href="transactions.html">Transactions</a>
+                <a href="reports.html">Reports</a> 
+                <a href="report-lost.html">Report Lost/Stolen</a> 
             </div>
             <div class="footer-section">
                 <h4>Contact Us</h4>
@@ -198,88 +201,120 @@
     </div>
 
     <script>
-        // Tab switching functionality
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        const transactionForms = document.querySelectorAll('.transaction-form');
-        
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Remove active class from all buttons and forms
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                transactionForms.forEach(form => form.classList.remove('active'));
-                
-                // Add active class to clicked button
-                button.classList.add('active');
-                
-                // Show corresponding form
-                const transactionType = button.getAttribute('data-transaction');
-                document.getElementById(`${transactionType}-form`).classList.add('active');
+        // Load stored accounts or initialize with default balances
+        const defaultAccounts = { main: 1245.50, savings: 3720.25 };
+
+        function loadAccounts() {
+            return JSON.parse(localStorage.getItem('accounts') || JSON.stringify(defaultAccounts));
+        }
+
+        function saveAccounts(accounts) {
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+        }
+
+        function loadTransactions() {
+            return JSON.parse(localStorage.getItem('transactions') || '[]');
+        }
+
+        function saveTransactions(transactions) {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
+
+        const transactionList = document.querySelector('.transaction-list');
+
+        function renderBalances() {
+            const acc = loadAccounts();
+            document.querySelector('.account-card .account-balance').textContent = `R${acc.main.toFixed(2)}`;
+            document.querySelector('.account-card.secondary .account-balance').textContent = `R${acc.savings.toFixed(2)}`;
+        }
+
+        function renderTransactions() {
+            const transactions = loadTransactions();
+            transactionList.innerHTML = '';
+            transactions.slice().reverse().forEach(tx => {
+            const item = document.createElement('div');
+            item.className = `transaction-item ${tx.type}`;
+            item.innerHTML = `
+                <div class="transaction-details">
+                <span class="transaction-type">${tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</span>
+                <span class="transaction-date">${tx.date}</span>
+                </div>
+                <div class="transaction-amount">${tx.type === 'deposit' ? '+' : '-'}R${parseFloat(tx.amount).toFixed(2)}</div>
+            `;
+            transactionList.appendChild(item);
             });
-        });
+        }
+
+        function addTransaction(type, fromAcc, toAcc, amount) {
+            const accounts = loadAccounts();
+            const amt = parseFloat(amount);
+
+            if(type === 'deposit') accounts[toAcc] += amt;
+            else if(type === 'withdraw') {
+            if(amt > accounts[fromAcc]) { alert('Insufficient funds!'); return; }
+            accounts[fromAcc] -= amt;
+            }
+            else if(type === 'transfer') {
+            if(amt > accounts[fromAcc]) { alert('Insufficient funds!'); return; }
+            accounts[fromAcc] -= amt;
+            if(toAcc !== 'external') accounts[toAcc] += amt;
+            }
+
+            saveAccounts(accounts);
+
+            const now = new Date();
+            const date = now.toLocaleDateString('en-ZA', {month:'short', day:'numeric', year:'numeric'});
+            const tx = { type, from: fromAcc, to: toAcc, amount: amt, date };
+            const transactions = loadTransactions();
+            transactions.push(tx);
+            saveTransactions(transactions);
+
+            renderBalances();
+            renderTransactions();
+        }
+
+        // Tab switching
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const forms = document.querySelectorAll('.transaction-form');
+        tabButtons.forEach(btn => btn.addEventListener('click', () => {
+            tabButtons.forEach(b => b.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(`${btn.dataset.transaction}-form`).classList.add('active');
+        }));
 
         // Show external account field when needed
         document.getElementById('transfer-to').addEventListener('change', function() {
-            const externalAccountGroup = document.getElementById('external-account-group');
-            externalAccountGroup.style.display = this.value === 'external' ? 'block' : 'none';
+            document.getElementById('external-account-group').style.display = this.value === 'external' ? 'block' : 'none';
         });
 
-        // Form submission handling
+        // Form submissions
         document.getElementById('deposit-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            addTransaction('deposit', null, document.getElementById('deposit-account').value, document.getElementById('deposit-amount').value);
             alert('Deposit processed successfully!');
-            // Add actual deposit logic here
+            this.reset();
         });
 
         document.getElementById('withdraw-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            addTransaction('withdraw', document.getElementById('withdraw-account').value, null, document.getElementById('withdraw-amount').value);
             alert('Withdrawal processed successfully!');
-            // Add actual withdrawal logic here
+            this.reset();
         });
 
         document.getElementById('transfer-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            const fromAcc = document.getElementById('transfer-from').value;
+            const toAcc = document.getElementById('transfer-to').value === 'external' ? document.getElementById('external-account').value : document.getElementById('transfer-to').value;
+            addTransaction('transfer', fromAcc, toAcc, document.getElementById('transfer-amount').value);
             alert('Transfer completed successfully!');
-            // Add actual transfer logic here
+            this.reset();
         });
 
-        // Chatbot Toggle
-        const chatbotToggle = document.getElementById('chatbot-toggle');
-        const chatbotContainer = document.getElementById('chatbot-container');
-        chatbotToggle.addEventListener('click', () => {
-            chatbotContainer.style.display = chatbotContainer.style.display === 'flex' ? 'none' : 'flex';
-        });
-
-        // Chatbot Messaging
-        const chatbotMessages = document.getElementById('chatbot-messages');
-        const chatbotSend = document.getElementById('chatbot-send');
-        const chatbotText = document.getElementById('chatbot-text');
-
-        function addMessage(sender, text) {
-            const msg = document.createElement('div');
-            msg.textContent = `${sender}: ${text}`;
-            chatbotMessages.appendChild(msg);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-        }
-
-        chatbotSend.addEventListener('click', () => {
-            const text = chatbotText.value.trim();
-            if (!text) return;
-            addMessage('You', text);
-            chatbotText.value = '';
-
-            // Simple responses
-            setTimeout(() => {
-                let reply = "I can help with your banking transactions.";
-                if (text.toLowerCase().includes('deposit')) {
-                    reply = "Use the deposit form to add funds to your account.";
-                } else if (text.toLowerCase().includes('withdraw')) {
-                    reply = "Use the withdrawal form to take money out of your account.";
-                } else if (text.toLowerCase().includes('transfer')) {
-                    reply = "Use the transfer form to move money between accounts.";
-                }
-                addMessage('Bot', reply);
-            }, 500);
-        });
+        // Initialize on page load
+        renderBalances();
+        renderTransactions();
     </script>
 </body>
 </html>

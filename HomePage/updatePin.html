@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Campus Cash — Update Card PIN</title>
+  <style>
+    :root {
+      --bg:#f4f6f8;
+      --card:#fff;
+      --accent:#0b74da;
+      --muted:#6b7280;
+      --danger:#dc2626;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg); color:#111; min-height:100vh;
+      display:flex; justify-content:center; align-items:flex-start; padding:40px 20px;
+    }
+    .container{
+      max-width:480px; width:100%;
+      background:var(--card); border-radius:12px; padding:24px;
+      box-shadow:0 6px 20px rgba(12,20,40,0.06);
+    }
+    h1{color:var(--accent); margin-top:0; margin-bottom:12px; font-size:1.5rem;}
+    label{display:block; font-size:0.9rem; margin:12px 0 6px 0; color:var(--muted);}
+    input{
+      width:100%; padding:10px; border-radius:8px; border:1px solid #e6e9ee;
+      font-size:0.95rem;
+    }
+    .btn{
+      display:inline-block; padding:10px 16px; border-radius:10px; border:0;
+      font-weight:600; cursor:pointer; margin-top:20px;
+    }
+    .btn-primary{background:var(--accent); color:white; width:100%;}
+    .btn-secondary{background:transparent; color:var(--accent); border:1px solid rgba(11,116,218,0.2); width:100%; margin-top:8px;}
+    .toast{
+      position:fixed; right:20px; bottom:20px; background:#111; color:#fff;
+      padding:12px 16px; border-radius:10px; display:none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Update Card PIN</h1>
+    <p style="color:var(--muted)">Enter your current PIN and choose a new PIN for your Campus Cash card.</p>
+
+    <form id="pinForm">
+      <label for="currentPin">Current PIN</label>
+      <input id="currentPin" type="password" maxlength="4" pattern="\d{4}" required placeholder="••••">
+
+      <label for="newPin">New PIN</label>
+      <input id="newPin" type="password" maxlength="4" pattern="\d{4}" required placeholder="••••">
+
+      <label for="confirmPin">Confirm New PIN</label>
+      <input id="confirmPin" type="password" maxlength="4" pattern="\d{4}" required placeholder="••••">
+
+      <button type="submit" class="btn btn-primary">Save New PIN</button>
+      <button type="button" class="btn btn-secondary" onclick="window.location.href='card-settings.html'">Cancel</button>
+    </form>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Saved</div>
+
+  <script>
+    function showToast(msg='Saved'){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(()=>{t.style.display='none';},2200);
+    }
+
+    const form = document.getElementById('pinForm');
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const current = document.getElementById('currentPin').value.trim();
+      const newPin = document.getElementById('newPin').value.trim();
+      const confirmPin = document.getElementById('confirmPin').value.trim();
+
+      if(newPin !== confirmPin){
+        showToast('New PIN and confirmation do not match!');
+        return;
+      }
+      if(newPin.length !== 4 || isNaN(newPin)){
+        showToast('PIN must be 4 digits!');
+        return;
+      }
+
+      // Here you would call the backend to update the PIN
+      showToast('Your PIN has been updated!');
+      form.reset();
+    });
+  </script>
+</body>
+</html>

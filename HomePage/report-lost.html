@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Report Lost/Stolen - Campus Cash Bank</title>
+  <link rel="stylesheet" href="report-lost.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">Campus Cash Bank</div>
+    <nav class="top-nav">
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="#">Account</a></li>
+        <li><a href="transactions.html">Transactions</a></li>
+        <li><a href="appointments.html">Appointments</a></li>
+        <li><a href="#">Profile</a></li>
+        <li><a href="reports.html">Reports</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="content">
+    <section class="report-card">
+      <h1>Report Lost/Stolen Campus Card</h1>
+      <p class="lead">Submit this form to freeze your card immediately and notify support.</p>
+
+      <form id="lostForm" onsubmit="handleSubmit(event)" novalidate>
+        <div class="grid">
+          <label>Student Name
+            <input type="text" name="name" placeholder="e.g., Aminah Seabela" required />
+          </label>
+          <label>Student Number
+            <input type="text" name="studentId" placeholder="e.g., 12345678" pattern="[0-9]{5,}" required />
+          </label>
+          <label>Card Last 4 Digits
+            <input type="text" name="cardLast4" maxlength="4" pattern="[0-9]{4}" placeholder="e.g., 0421" required />
+          </label>
+          <label>Issue Type
+            <select name="issue" required>
+              <option value="">Select...</option>
+              <option value="lost">Lost</option>
+              <option value="stolen">Stolen</option>
+            </select>
+          </label>
+          <label>Last Seen Date
+            <input type="date" name="lastSeen" max="" required />
+          </label>
+          <label>Contact Email
+            <input type="email" name="email" placeholder="you@uni.ac.za" required />
+          </label>
+        </div>
+
+        <label>Describe what happened
+          <textarea name="details" rows="5" placeholder="Where/when you last used it, any suspicious activity, etc." required></textarea>
+        </label>
+
+        <div class="actions">
+          <button type="submit">Submit Report</button>
+          <a class="btn-secondary" href="transactions.html">View Recent Transactions</a>
+        </div>
+
+        <p class="hint">After submitting, your card will be flagged and our team will contact you within one business day.</p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <a href="home.html">Home</a>
+        <a href="reports.html">Reports</a>
+        <a href="transactions.html">Transactions</a>
+      </div>
+      <div class="footer-section">
+        <h4>Contact Us</h4>
+        <p>Email: support@campuscashbank.co.za</p>
+        <p>Phone: +27 12 345 6789</p>
+        <p>Location: NWU Potchefstroom, SA</p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top: 20px;">
+      &copy; 2025 Campus Cash Bank. All Rights Reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Set max date to today
+    document.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      document.querySelector('input[name="lastSeen"]').setAttribute('max', today);
+    });
+
+    function handleSubmit(e){
+      e.preventDefault();
+      const form = e.target;
+      if(!form.checkValidity()){
+        form.reportValidity();
+        return;
+      }
+      // Freeze card + confirmation (mock)
+      alert('Thanks! Your report has been submitted and your card is now frozen.');
+      // Optional: redirect user to reports page
+      window.location.href = 'reports.html';
+    }
+  </script>
+</body>
+</html>

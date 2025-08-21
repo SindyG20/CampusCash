@@ -68,13 +68,13 @@
       </div>
       <div class="actions">
         <button id="settingsToggle" class="btn" title="Settings">Settings ▾</button>
-        <div id="settingsDropdown" class="dropdown">
-          <button id="editProfile">Edit Profile</button>
-          <button id="blockCard">Block Card</button>
-          <button id="replaceCard">Replace Card</button>
-          <button id="cardSettings">Card Settings</button>
-          <button id="cardLimits">Card Limits</button>
-          <button id="reportLost">Report Lost / Stolen Card</button>
+        <div id="settingsDropdown" class="dropdown" role="menu" aria-hidden="true">
+          <button id="editProfile" role="menuitem">Edit Profile</button>
+          <button id="blockCard" role="menuitem">Block Card</button>
+          <button id="replaceCard" role="menuitem">Replace Card</button>
+          <button id="cardSettings" role="menuitem">Card Settings</button>
+          <button id="cardLimits" role="menuitem">Card Limits</button>
+          <button id="reportLost" role="menuitem">Report Lost / Stolen Card</button>
         </div>
         <button id="logout" class="btn secondary" title="Logout">Logout</button>
       </div>
@@ -230,11 +230,12 @@
     const dropdown = document.getElementById('settingsDropdown');
     const toggle = document.getElementById('settingsToggle');
 
-    function closeDropdown(){ dropdown.style.display='none'; }
-    function openDropdown(){ dropdown.style.display='flex'; }
+    function closeDropdown(){ dropdown.style.display='none'; dropdown.setAttribute('aria-hidden','true'); }
+    function openDropdown(){ dropdown.style.display='flex'; dropdown.setAttribute('aria-hidden','false'); }
 
     toggle.addEventListener('click', ()=>{
       dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+      dropdown.setAttribute('aria-hidden', dropdown.style.display !== 'flex');
     });
 
     document.addEventListener('click',(e)=>{
@@ -243,12 +244,28 @@
       }
     });
 
-    // Actions for card management
-    document.getElementById('blockCard').addEventListener('click', ()=>{ closeDropdown(); showToast('Card blocked'); });
-    document.getElementById('replaceCard').addEventListener('click', ()=>{ closeDropdown(); showToast('Replacement card requested'); });
-    document.getElementById('cardSettings').addEventListener('click', ()=>{ closeDropdown(); showToast('Opening card settings...'); });
-    document.getElementById('cardLimits').addEventListener('click', ()=>{ closeDropdown(); showToast('Card limits updated'); });
-    document.getElementById('reportLost').addEventListener('click', ()=>{ closeDropdown(); showToast('Lost/Stolen card reported'); });
+    // Actions for card management - now navigate to pages
+    document.getElementById('blockCard').addEventListener('click', ()=>{
+      closeDropdown();
+      window.location.href = 'block-card.html';
+    });
+    document.getElementById('replaceCard').addEventListener('click', ()=>{
+      closeDropdown();
+      window.location.href = 'Replace-card.html';
+    });
+    document.getElementById('cardSettings').addEventListener('click', ()=>{
+      closeDropdown();
+      window.location.href = 'cardSettings.html';
+    });
+    document.getElementById('cardLimits').addEventListener('click', ()=>{
+      closeDropdown();
+      window.location.href = 'cardLimits.html';
+    });
+    
+    document.getElementById('reportLost').addEventListener('click', ()=>{
+      closeDropdown();
+      window.location.href = "report-lost.html";
+    });
 
     // Init
     updateDisplay(loadProfile());
