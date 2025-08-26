@@ -82,10 +82,46 @@
         <div class="setting">
           <h3>Update Card PIN</h3>
           <p>Change your PIN regularly to keep your account secure.</p>
-          <button class="btn btn-primary" onclick="alert('Redirecting to PIN update...')">Update PIN</button>
+          <a href="updatePin.html" class="btn btn-primary">Update PIN</a>
         </div>
       </div>
     </main>
   </div>
+  <script>
+  // Toast function (matches profile style)
+  function showToast(msg = "Done") {
+    let t = document.getElementById('toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'toast';
+      t.className = 'toast';
+      t.setAttribute('role','status');
+      t.setAttribute('aria-live','polite');
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(()=>{ t.style.display='none'; }, 2200);
+  }
+
+  // Freeze Card
+  document.querySelector(".btn-danger").addEventListener("click", () => {
+    // Here you could integrate API call to freeze card
+    showToast("Your card has been frozen!");
+  });
+
+  // Request Card Replacement
+  document.querySelector(".btn-outline").addEventListener("click", () => {
+    // Integrate API call to request replacement
+    showToast("Replacement request submitted!");
+  });
+
+  // Update PIN
+  document.querySelector(".btn-primary").addEventListener("click", () => {
+    // Redirect to PIN update page (or modal)
+    // window.location.href = "update-pin.html";
+    showToast("Redirecting to PIN update...");
+  });
+</script>
 </body>
 </html>
