@@ -1,40 +1,40 @@
-using Campus.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using MyAspMySql.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// EF Core + MySQL
-var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+// Add services to the container
+builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(conn, ServerVersion.AutoDetect(conn)));
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// CORS (optional; safe for local dev)
-builder.Services.AddCors(o =>
-{
-    o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-});
+      options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+          new MySqlServerVersion(new Version(8, 0, 36))));
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+// ✅ Add this block: seed the database
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    DbInitializer.Initialize(context);
+}
+
+// Configure the HTTP request pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
-// Serve static files (our HTML) from wwwroot
 app.UseStaticFiles();
 
-app.UseCors();
-app.MapControllers();
+app.UseRouting();
 
-// Optional: if you put a single-page front-end, serve index.html by default
-// app.MapFallbackToFile("index.html");
+app.UseAuthorization();
+
+app.MapDefaultControllerRoute();
+
+app.MapControllers();
 
 app.Run();

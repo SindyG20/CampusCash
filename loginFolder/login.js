@@ -54,4 +54,17 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             document.getElementById('loginForm').reset();
         }, 1500); // Simulate network delay
     }
+
+    fetch("https://localhost:5001/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    email: document.getElementById("email").value,
+    passwordHash: document.getElementById("password").value
+  })
+}).then(res => res.json())
+  .then(data => {
+    localStorage.setItem("user", JSON.stringify(data));
+    window.location.href = "dashboard.html";
+  });
 });

@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Campus Cash Bank</title>
-    <link rel="stylesheet" href="css/login.css"> <!-- Using your purple CSS -->
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
     <div class="login-container">
-        <img src="NwuLogo.png" alt="NWU Logo" class="logo"> <!-- FIXED src typo -->
+        <img src="NwuLogo.png" alt="NWU Logo" class="logo">
         <h1>Campus Cash Bank</h1>
         
         <form id="loginForm">
@@ -24,7 +24,7 @@
                 <span class="error" id="passwordError"></span>
             </div>
             
-            <button type="submit" class="btn">Login</button>
+            <button type="submit" class="btn" id="loginButton">Login</button>
             
             <div class="footer-links">
                 <a href="forgotPassword.html">Forgot Password?</a>
@@ -32,6 +32,69 @@
         </form>
     </div>
 
-    <script src="js/auth.js"></script>
+    <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        // Clear previous errors
+        document.getElementById('StudentNumberError').innerText = "";
+        document.getElementById('passwordError').innerText = "";
+
+        // Get input values
+        const studentNumber = document.getElementById('StudentNumber').value.trim();
+        const password = document.getElementById('password').value;
+
+        // Validation
+        let isValid = true;
+        if (studentNumber === "") {
+            document.getElementById('StudentNumberError').innerText = "Student number is required.";
+            isValid = false;
+        } else if (!/^\d{8}$/.test(studentNumber)) {
+            document.getElementById('StudentNumberError').innerText = "Student number must be 8 digits.";
+            isValid = false;
+        }
+
+        if (password === "") {
+            document.getElementById('passwordError').innerText = "Password is required.";
+            isValid = false;
+        } else if (password.length < 8) {
+            document.getElementById('passwordError').innerText = "Password must be at least 8 characters.";
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        // Disable button while logging in
+        const loginBtn = document.getElementById('loginButton');
+        loginBtn.disabled = true;
+        loginBtn.textContent = "Logging in...";
+
+        try {
+            const response = await fetch("https://localhost:5001/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    studentNumber: studentNumber,
+                    passwordHash: password
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem("user", JSON.stringify(data));
+                alert("✅ Login successful!");
+                window.location.href = "dashboard.html";
+            } else {
+                const errMsg = await response.text();
+                alert("❌ Login failed: " + errMsg);
+            }
+        } catch (err) {
+            alert("❌ Login failed: " + err.message);
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.textContent = "Login";
+        }
+    });
+    </script>
 </body>
 </html>
