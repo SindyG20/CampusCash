@@ -82,19 +82,19 @@
         }
 
         try {
-            const response = await fetch("https://localhost:5001/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    studentId: document.getElementById("StudentID").value,
-                    studentNumber: document.getElementById("StudentNumber").value,
-                    fullName: document.getElementById("FullName").value,
-                    dateOfBirth: document.getElementById("DOB").value,
-                    address: document.getElementById("Address").value,
-                    accountType: document.getElementById("AccountType").value,
-                    email: document.getElementById("email").value,
-                    passwordHash: pwd
-                })
+            const response = await fetch("http://localhost:5264/api/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        studentId: document.getElementById("StudentID").value,
+        studentNumber: document.getElementById("StudentNumber").value,
+        fullName: document.getElementById("FullName").value,
+        dateOfBirth: document.getElementById("DOB").value,
+        address: document.getElementById("Address").value,
+        accountType: document.getElementById("AccountType").value,
+        email: document.getElementById("email").value,
+        passwordHash: document.getElementById("password").value
+    })
             });
 
             if (response.ok) {

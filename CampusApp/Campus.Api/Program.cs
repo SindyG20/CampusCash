@@ -1,10 +1,10 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Add services to the container
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -13,11 +13,9 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-app.UseCors();
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -26,29 +24,29 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Enable CORS (use default policy)
+app.UseCors();
 
-app.MapGet("/weatherforecast", () =>
+// ----------------- REGISTER ENDPOINT -----------------
+app.MapPost("/api/auth/register", (UserRegistration user) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    // In a real app: save user to database here
+    Console.WriteLine($"✅ New user registered: {user.StudentId}, {user.FullName}");
+
+    return Results.Ok(new { message = "User registered successfully!" });
+});
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+// ----------------- MODELS -----------------
+public class UserRegistration
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public string StudentId { get; set; } = "";
+    public string StudentNumber { get; set; } = "";
+    public string FullName { get; set; } = "";
+    public string DateOfBirth { get; set; } = "";
+    public string Address { get; set; } = "";
+    public string AccountType { get; set; } = "";
+    public string Email { get; set; } = "";
+    public string PasswordHash { get; set; } = "";
 }
