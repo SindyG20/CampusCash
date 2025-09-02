@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Welcome - Campus Management System</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #1a2a6c, #2980b9, #3498db);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        height: 100vh;
+        color: #fff;
+        position: relative;
+    }
+
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .top-bar {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .bank-logo img {
+        height: 200px; /* adjust as needed */
+        width: auto;
+    }
+
+    .login-btn {
+        background: #3498db; 
+        color: white;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .login-btn:hover {
+        background: #2980b9;
+    }
+
+    .welcome-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        text-align: center;
+    }
+
+    .welcome-container h1 {
+        font-size: 48px;
+        margin-bottom: 20px;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+    }
+
+    .welcome-container p {
+        font-size: 20px;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="bank-logo">
+        <img src="logo.png" alt="NWU Bank Logo">
+    </div>
+    <!-- Login button fixed to go to admin login page -->
+    <a href="admin-login.html" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Login
+    </a>
+</div>
+
+<div class="welcome-container">
+    <h1>Welcome, Admin!</h1>
+    
+</div>
+
+</body>
+</html>
