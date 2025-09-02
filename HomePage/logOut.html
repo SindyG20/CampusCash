@@ -26,7 +26,7 @@
       width:44px; height:44px; border-radius:8px; background:linear-gradient(135deg,#7c3aed,#a78bfa);
       display:flex; align-items:center; justify-content:center; color:white; font-weight:700;
     }
-    nav a{margin-left:12px; text-decoration:none; color:var(--muted)}
+    nav a, nav button{margin-left:12px; text-decoration:none; color:var(--muted); background:none; border:none; cursor:pointer; font:inherit}
     .card{background:var(--card); border-radius:12px; padding:28px; box-shadow:0 8px 30px rgba(124,58,237,0.2)}
     .btn{
       display:inline-block; padding:10px 16px; border-radius:8px; text-decoration:none; cursor:pointer;
@@ -72,7 +72,7 @@
 
       <div class="actions">
         <a href="home.html" class="btn btn-primary" role="button">Return to dashboard/home</a>
-        <button id="logoutBtn2" class="btn btn-danger" aria-haspopup="dialog">Log out</button>
+        <button id="logoutBtn2" class="btn btn-danger">Log out</button>
       </div>
     </main>
   </div>
@@ -114,15 +114,10 @@
     logoutButtons.forEach(b => b && b.addEventListener('click', openModal));
     cancelBtn.addEventListener('click', closeModal);
 
-    async function doLogout(){
-      try {
-        await fetch('/logout', { method:'POST', credentials:'include' });
-      } catch (err) {
-        console.warn('No backend logout endpoint:', err);
-      }
+    function doLogout(){
       sessionStorage.clear();
       localStorage.clear();
-      window.location.href = '/indexFolder/index.html';
+      window.location.href = 'index.html';
     }
 
     confirmBtn.addEventListener('click', () => {
@@ -130,6 +125,7 @@
       confirmBtn.textContent = 'Signing out...';
       doLogout();
     });
+
     backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
   </script>
 </body>

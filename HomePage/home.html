@@ -6,7 +6,6 @@
 <title>Campus Cash Bank - Home</title>
 <link rel="stylesheet" href="home.css">
 <style>
-    /* Your existing styles */
     body {
         margin: 0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -325,25 +324,9 @@
 </div>
 
 <script>
-const userKey = "campusCashUser";
-let user = JSON.parse(localStorage.getItem(userKey));
-
-if (!user) {
-    alert("⚠️ Please log in first.");
-    window.location.href = "/login.html";
-} else {
-    // Ensure accountNumber exists and only generate if missing
-    if (!user.accountNumber || user.accountNumber === 0) {
-        user.accountNumber = Math.floor(10000000 + Math.random() * 90000000);
-        localStorage.setItem(userKey, JSON.stringify(user)); // Save updated accountNumber
-    }
-
-    // Display all user info correctly
-    document.getElementById("fullName").textContent = user.fullName || "N/A";
-    document.getElementById("studentNumber").textContent = user.studentNumber || "N/A";
-    document.getElementById("accountType").textContent = user.accountType || "N/A";
-    document.getElementById("accountNumber").textContent = user.accountNumber || "N/A";
-    document.getElementById("balance").textContent = user.balance !== undefined ? parseFloat(user.balance).toFixed(2) : "0.00";
+    // Account number generator
+    const accNum = Math.floor(10000000 + Math.random() * 90000000);
+    document.getElementById('accNum').innerText = accNum;
 
     // Update welcome message in hero
     const heroHeading = document.querySelector(".hero h1");

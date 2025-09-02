@@ -159,63 +159,87 @@
     </footer>
 
     <script>
-    // --- User and Account Setup ---
-    const userKey = "campusCashUser";
-    let user = JSON.parse(localStorage.getItem(userKey));
-    if(!user) { alert("Please log in first."); window.location.href = "login.html"; }
+        // Load stored accounts or initialize with default balances
+        const defaultAccounts = { main: 1245.50, savings: 3720.25 };
 
-    // Initialize accounts
-    const accounts = {
-        main: parseFloat(user.balance || 0),
-        savings: parseFloat(localStorage.getItem(`savingsBalance_${user.studentId}`) || 0)
-    };
+        function loadAccounts() {
+            return JSON.parse(localStorage.getItem('accounts') || JSON.stringify(defaultAccounts));
+        }
 
-    // Account numbers
-    const mainAccountNumber = user.accountNumber;
-    let savingsAccountNumber = localStorage.getItem(`savingsAccountNumber_${user.studentId}`);
-    if(!savingsAccountNumber) {
-        savingsAccountNumber = 'CCB-' + Math.floor(10000000 + Math.random()*90000000);
-        localStorage.setItem(`savingsAccountNumber_${user.studentId}`, savingsAccountNumber);
-    }
+        function saveAccounts(accounts) {
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+        }
 
-    // Update DOM account numbers
-    document.getElementById('main-account-number').textContent = mainAccountNumber;
-    document.getElementById('savings-account-number').textContent = savingsAccountNumber;
+        function loadTransactions() {
+            return JSON.parse(localStorage.getItem('transactions') || '[]');
+        }
 
-    // --- Balance Functions ---
-    function updateBalances() {
-        document.getElementById('main-balance').textContent = `R${accounts.main.toFixed(2)}`;
-        document.getElementById('savings-balance').textContent = `R${accounts.savings.toFixed(2)}`;
-    }
+        function saveTransactions(transactions) {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
 
-    function saveBalances() {
-        user.balance = accounts.main;
-        localStorage.setItem(userKey, JSON.stringify(user));
-        localStorage.setItem(`savingsBalance_${user.studentId}`, accounts.savings);
-    }
+        const transactionList = document.querySelector('.transaction-list');
 
-    // --- Transaction History ---
-    function addTransaction(type, amount, description) {
-        const transactionsKey = `transactionHistory_${user.studentId}`;
-        const transactions = JSON.parse(localStorage.getItem(transactionsKey) || "[]");
-        transactions.push({
-            date: new Date().toISOString().split("T")[0],
-            amount: amount.toFixed(2),
-            description,
-            type
-        });
-        localStorage.setItem(transactionsKey, JSON.stringify(transactions));
-    }
+        function renderBalances() {
+            const acc = loadAccounts();
+            document.querySelector('.account-card .account-balance').textContent = `R${acc.main.toFixed(2)}`;
+            document.querySelector('.account-card.secondary .account-balance').textContent = `R${acc.savings.toFixed(2)}`;
+        }
 
-    // --- Tab Switching ---
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const forms = document.querySelectorAll('.transaction-form');
-    tabButtons.forEach(btn => btn.addEventListener('click', () => {
-        tabButtons.forEach(b => b.classList.remove('active'));
-        forms.forEach(f => f.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(`${btn.dataset.transaction}-form`).classList.add('active');
-    }));
+        function renderTransactions() {
+            const transactions = loadTransactions();
+            transactionList.innerHTML = '';
+            transactions.slice().reverse().forEach(tx => {
+            const item = document.createElement('div');
+            item.className = `transaction-item ${tx.type}`;
+            item.innerHTML = `
+                <div class="transaction-details">
+                <span class="transaction-type">${tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</span>
+                <span class="transaction-date">${tx.date}</span>
+                </div>
+                <div class="transaction-amount">${tx.type === 'deposit' ? '+' : '-'}R${parseFloat(tx.amount).toFixed(2)}</div>
+            `;
+            transactionList.appendChild(item);
+            });
+        }
+
+        function addTransaction(type, fromAcc, toAcc, amount) {
+            const accounts = loadAccounts();
+            const amt = parseFloat(amount);
+
+            if(type === 'deposit') accounts[toAcc] += amt;
+            else if(type === 'withdraw') {
+            if(amt > accounts[fromAcc]) { alert('Insufficient funds!'); return; }
+            accounts[fromAcc] -= amt;
+            }
+            else if(type === 'transfer') {
+            if(amt > accounts[fromAcc]) { alert('Insufficient funds!'); return; }
+            accounts[fromAcc] -= amt;
+            if(toAcc !== 'external') accounts[toAcc] += amt;
+            }
+
+            saveAccounts(accounts);
+
+            const now = new Date();
+            const date = now.toLocaleDateString('en-ZA', {month:'short', day:'numeric', year:'numeric'});
+            const tx = { type, from: fromAcc, to: toAcc, amount: amt, date };
+            const transactions = loadTransactions();
+            transactions.push(tx);
+            saveTransactions(transactions);
+
+            renderBalances();
+            renderTransactions();
+        }
+
+        // Tab switching
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const forms = document.querySelectorAll('.transaction-form');
+        tabButtons.forEach(btn => btn.addEventListener('click', () => {
+            tabButtons.forEach(b => b.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(`${btn.dataset.transaction}-form`).classList.add('active');
+        }));
 
     // Show external account input if selected
     document.getElementById('transfer-to').addEventListener('change', function() {

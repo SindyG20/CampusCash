@@ -46,41 +46,47 @@
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <div class="logo">
-      <img src="" alt="" width="40" height="40" style="border-radius:8px;background:linear-gradient(90deg,#0b74da,#00c6ff)"/>
-      <div class="brand">Campus Cash</div>
-    </div>
-    <div class="nav">
-      <a href="home.html">Home</a>
-    </div>
-    <div class="actions">
-      <button id="settingsToggle" class="btn" title="Settings">Settings ▾</button>
-      <div id="settingsDropdown" class="dropdown" role="menu" aria-hidden="true">
-        <button id="editProfile" role="menuitem">Edit Profile</button>
-        <button id="blockCard" role="menuitem">Block Card</button>
-        <button id="replaceCard" role="menuitem">Replace Card</button>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <img src="" alt="" width="40" height="40" style="border-radius:8px;background:linear-gradient(90deg,#0b74da,#00c6ff)"/>
+        <div class="brand">Campus Cash</div>
       </div>
-      <button id="logout" class="btn secondary" title="Logout">Logout</button>
+      <div class="nav">
+        <a href="home.html">Home</a>
+        <a href="profile.html">Profile</a>
+        <a href="#">Accounts</a>
+      </div>
+      <div class="actions">
+        <button id="settingsToggle" class="btn" title="Settings">Settings ▾</button>
+        <div id="settingsDropdown" class="dropdown" role="menu" aria-hidden="true">
+          <button id="editProfile" role="menuitem">Edit Profile</button>
+          <button id="blockCard" role="menuitem">Block Card</button>
+          <button id="replaceCard" role="menuitem">Replace Card</button>
+          <button id="cardSettings" role="menuitem">Card Settings</button>
+          <button id="cardLimits" role="menuitem">Card Limits</button>
+          <button id="reportLost" role="menuitem">Report Lost / Stolen Card</button>
+        </div>
+        <button id="logout" class="btn secondary" title="Logout">Logout</button>
+      </div>
     </div>
-  </div>
 
-  <main class="card" role="region" aria-label="User profile">
-    <div>
-      <div id="avatar" class="avatar" aria-hidden="true">SG</div>
-    </div>
-    <div class="info">
-      <h2 id="displayName"></h2>
-      <p id="displayEmail"></p>
-      <div class="meta">
-        <div class="chip" id="displayPhone"></div>
-        <div class="chip" id="displayMember">Member since: <span id="displaySince"></span></div>
+    <main class="card" role="region" aria-label="User profile">
+      <div>
+        <div id="avatar" class="avatar" aria-hidden="true">SG</div>
       </div>
-      <p class="small" id="displayAddress"></p>
-    </div>
-  </main>
-</div>
+      <div class="info">
+        <h2 id="displayName">Sindy Gumede</h2>
+        <p id="displayEmail">sindyg@example.com</p>
+        <div class="meta">
+          <div class="chip" id="displayPhone">+27 82 123 4567</div>
+          <div class="chip" id="displayMember">Member since: <span id="displaySince">2024-05-02</span></div>
+        </div>
+        <p class="small" id="displayAddress">123 Rose Street, Johannesburg</p>
+      </div>
+    </main>
+
+  </div>
 
 <!-- Modal -->
 <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
