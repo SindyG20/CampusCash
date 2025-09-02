@@ -1,12 +1,11 @@
 {
   "Version": 1,
-  "Hash": "3pqnhD4XgZUDGYOJIRC+eKlb1IXe1JzupDJCmgxcgGs=",
+  "Hash": "1NHhtv3oc1d/7ZhZ+KB5NRCQg6xFrpVyJ2HKJiw654M=",
   "Source": "Campus.Api",
   "BasePath": "_content/Campus.Api",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": []
 }
