@@ -65,7 +65,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 })
 .then(res => res.json())
 .then(data => {
-    localStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("user", JSON.stringify(userData));
     window.location.href = "dashboard.html";
 })
 .catch(err => {

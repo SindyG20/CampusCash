@@ -14,10 +14,10 @@
     <nav class="top-nav">
       <ul>
         <li><a href="home.html">Home</a></li>
-        <li><a href="#">Account</a></li>
+        <li><a href="#">Accounts</a></li>
         <li><a href="transactions.html">Transactions</a></li>
         <li><a href="appointments.html">Appointments</a></li>
-        <li><a href="#">Profile</a></li>
+        <li><a href="profile.html">Profile</a></li>
         <li><a href="reports.html" class="active">Reports</a></li>
       </ul>
     </nav>
@@ -35,11 +35,6 @@
           <option value="Withdrawal">Withdrawal</option>
           <option value="Transfer">Transfer</option>
         </select>
-        <select id="filter-status" onchange="filterTable()">
-          <option value="">All Statuses</option>
-          <option value="Completed">Completed</option>
-          <option value="Pending">Pending</option>
-        </select>
       </div>
 
       <table id="transactionTable">
@@ -48,36 +43,11 @@
             <th>Date</th>
             <th>Amount (R)</th>
             <th>Description</th>
-            <th>Status</th>
-            <th>Counterparty</th>
             <th>Type</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>2025-08-01</td>
-            <td>500.00</td>
-            <td>NSFAS Disbursement</td>
-            <td class="status-completed">Completed</td>
-            <td>NSFAS</td>
-            <td>Deposit</td>
-          </tr>
-          <tr>
-            <td>2025-08-03</td>
-            <td>120.00</td>
-            <td>Bookstore Purchase</td>
-            <td class="status-completed">Completed</td>
-            <td>Campus Bookstore</td>
-            <td>Withdrawal</td>
-          </tr>
-          <tr>
-            <td>2025-08-05</td>
-            <td>300.00</td>
-            <td>Transfer to roommate</td>
-            <td class="status-pending">Pending</td>
-            <td>John Mokoena</td>
-            <td>Transfer</td>
-          </tr>
+          <!-- Transactions will load here -->
         </tbody>
       </table>
     </section>
@@ -88,7 +58,7 @@
     <div class="footer-content">
       <div class="footer-section">
         <h4>Quick Links</h4>
-        <li><a href="home.html">Home</a></li>
+        <a href="home.html">Home</a>
         <a href="#">Account</a>
         <a href="transactions.html">Transactions</a>
       </div>
@@ -104,94 +74,59 @@
     </div>
   </footer>
 
-  <!-- Chatbot -->
-  <button id="chatbot-toggle" aria-label="Toggle Chatbot">💬</button>
-  <div id="chatbot-container">
-    <div id="chatbot-header">Campus Cash Assistant</div>
-    <div id="chatbot-messages"></div>
-    <div id="chatbot-input">
-      <input type="text" id="chatbot-text" placeholder="Type your message..." aria-label="Chat input"/>
-      <button id="chatbot-send">Send</button>
-    </div>
-  </div>
-
   <script>
-    // Set max date (today) to prevent future selection
-    document.addEventListener("DOMContentLoaded", () => {
-      const today = new Date().toISOString().split("T")[0];
-      document.getElementById("filter-date").setAttribute("max", today);
+  // Get current logged-in user
+  const userKey = "campusCashUser";
+  const currentUser = JSON.parse(localStorage.getItem(userKey));
+
+  if(!currentUser){
+    alert("Please log in first.");
+    window.location.href = "login.html";
+  }
+
+  // Load transaction history for this user
+  const transactionKey = `transactionHistory_${currentUser.studentId}`;
+  const transactionHistory = JSON.parse(localStorage.getItem(transactionKey) || "[]");
+
+  function renderTransactions() {
+    const tbody = document.querySelector("#transactionTable tbody");
+    tbody.innerHTML = "";
+
+    transactionHistory.forEach(tx => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${tx.date}</td>
+        <td>${parseFloat(tx.amount).toFixed(2)}</td>
+        <td>${tx.description}</td>
+        <td>${tx.type}</td>
+      `;
+      tbody.appendChild(row);
     });
+  }
 
-    function filterTable() {
-      const date = document.getElementById("filter-date").value;
-      const type = document.getElementById("filter-type").value;
-      const status = document.getElementById("filter-status").value;
+  function filterTable() {
+    const date = document.getElementById("filter-date").value;
+    const type = document.getElementById("filter-type").value;
 
-      const rows = document.querySelectorAll("#transactionTable tbody tr");
+    const rows = document.querySelectorAll("#transactionTable tbody tr");
 
-      rows.forEach(row => {
-        const rowDate = row.cells[0].textContent;
-        const rowType = row.cells[5].textContent;
-        const rowStatus = row.cells[3].textContent;
+    rows.forEach(row => {
+      const rowDate = row.cells[0].textContent;
+      const rowType = row.cells[3].textContent;
 
-        let show = true;
+      let show = true;
+      if (date && !rowDate.includes(date)) show = false;
+      if (type && rowType !== type) show = false;
 
-        if (date && !rowDate.includes(date)) show = false;
-        if (type && rowType !== type) show = false;
-        if (status && !rowStatus.includes(status)) show = false;
-
-        row.style.display = show ? "" : "none";
-      });
-    }
-
-    // Chatbot toggle and messaging
-    const chatbotToggle = document.getElementById('chatbot-toggle');
-    const chatbotContainer = document.getElementById('chatbot-container');
-    const chatbotMessages = document.getElementById('chatbot-messages');
-    const chatbotSend = document.getElementById('chatbot-send');
-    const chatbotText = document.getElementById('chatbot-text');
-
-    chatbotToggle.addEventListener('click', () => {
-      if (chatbotContainer.style.display === 'flex') {
-        chatbotContainer.style.display = 'none';
-      } else {
-        chatbotContainer.style.display = 'flex';
-        chatbotText.focus();
-      }
+      row.style.display = show ? "" : "none";
     });
+  }
 
-    function addMessage(sender, text) {
-      const msg = document.createElement('div');
-      msg.textContent = `${sender}: ${text}`;
-      chatbotMessages.appendChild(msg);
-      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-    }
+  // Render transactions when page loads
+  renderTransactions();
+</script>
 
-    chatbotSend.addEventListener('click', () => {
-      const text = chatbotText.value.trim();
-      if (!text) return;
-      addMessage('You', text);
-      chatbotText.value = '';
 
-      // Basic bot response
-      setTimeout(() => {
-        let reply = "I can help you with your transactions or general inquiries.";
-        if (text.toLowerCase().includes('filter')) {
-          reply = "Use the filters above the table to sort your transactions by date, type, or status.";
-        } else if (text.toLowerCase().includes('help')) {
-          reply = "Feel free to ask about your transactions or how to use Campus Cash Bank.";
-        }
-        addMessage('Bot', reply);
-      }, 500);
-    });
-
-    // Optional: Send message on Enter key in input
-    chatbotText.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        chatbotSend.click();
-      }
-    });
-  </script>
 
 </body>
 </html>

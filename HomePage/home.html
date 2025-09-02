@@ -256,9 +256,11 @@
 <main class="content">
     <section id="accountDetails" class="section">
         <h2>Your Account Summary</h2>
-        <p>Account Type: Student Account</p>
-        <p>Account Number: <span id="accNum">Loading...</span></p>
-        <p>Balance: R0.00</p>
+        <p><strong>Name:</strong> <span id="fullName">Loading...</span></p>
+        <p><strong>Student Number:</strong> <span id="studentNumber">Loading...</span></p>
+        <p><strong>Account Type:</strong> <span id="accountType">Loading...</span></p>
+        <p><strong>Account Number:</strong> <span id="accountNumber">Loading...</span></p>
+        <p><strong>Balance:</strong> R<span id="balance">0.00</span></p>
     </section>
 
     <div class="cards">
@@ -276,6 +278,7 @@
         </div>
     </div>
 </main>
+
 
 <footer class="footer">
     <div class="footer-content">
@@ -322,64 +325,82 @@
 </div>
 
 <script>
-    // Account number generator
-    const accNum = Math.floor(10000000 + Math.random() * 90000000);
-    document.getElementById('accNum').innerText = accNum;
-    // Example after verifying login
+const userKey = "campusCashUser";
+let user = JSON.parse(localStorage.getItem(userKey));
 
-    // Chatbot logic
-    const responses = {
-        "how do i top up": "💳 You can top up your Campus Cash at the finance office or online via the student portal.",
-        "where can i use my campus cash card": "🏫 Campus Cash cards can be used at cafeterias, bookstores, and printing stations on campus.",
-        "how do i check my balance": "📊 Log into your Campus Cash account and click 'My Balance' to see your funds.",
-        "contact support": "📞 Email: support@campuscashbank.co.za | Tel: 012 345 6789",
-        "how can i book an appointment": "Tap on appointments on the dashboard"
-    };
+if (!user) {
+    alert("⚠️ Please log in first.");
+    window.location.href = "/login.html";
+} else {
+    // Ensure accountNumber exists and only generate if missing
+    if (!user.accountNumber || user.accountNumber === 0) {
+        user.accountNumber = Math.floor(10000000 + Math.random() * 90000000);
+        localStorage.setItem(userKey, JSON.stringify(user)); // Save updated accountNumber
+    }
 
-    const chatToggle = document.getElementById("chat-toggle");
-    const chatContainer = document.getElementById("chat-container");
-    const chatClose = document.getElementById("chat-close");
+    // Display all user info correctly
+    document.getElementById("fullName").textContent = user.fullName || "N/A";
+    document.getElementById("studentNumber").textContent = user.studentNumber || "N/A";
+    document.getElementById("accountType").textContent = user.accountType || "N/A";
+    document.getElementById("accountNumber").textContent = user.accountNumber || "N/A";
+    document.getElementById("balance").textContent = user.balance !== undefined ? parseFloat(user.balance).toFixed(2) : "0.00";
 
-    chatToggle.addEventListener("click", () => {
-        chatContainer.style.display = "flex";
-    });
-    chatClose.addEventListener("click", () => {
-        chatContainer.style.display = "none";
-    });
+    // Update welcome message in hero
+    const heroHeading = document.querySelector(".hero h1");
+    if (user.fullName) heroHeading.textContent = `Welcome, ${user.fullName}!`;
+}
+/* -------------------
+   Chatbot logic
+------------------- */
+const responses = {
+    "how do i top up": "💳 You can top up your Campus Cash at the finance office or online via the student portal.",
+    "where can i use my campus cash card": "🏫 Campus Cash cards can be used at cafeterias, bookstores, and printing stations on campus.",
+    "how do i check my balance": "📊 Your balance is displayed in the Account Summary section.",
+    "contact support": "📞 Email: support@campuscashbank.co.za | Tel: +27 12 413 7159",
+    "how can i book an appointment": "Tap on appointments on the dashboard"
+};
 
-    document.getElementById("send-btn").addEventListener("click", sendMessage);
-    document.getElementById("user-input").addEventListener("keypress", function(e) {
-        if (e.key === "Enter") sendMessage();
-    });
+const chatToggle = document.getElementById("chat-toggle");
+const chatContainer = document.getElementById("chat-container");
+const chatClose = document.getElementById("chat-close");
 
-    function sendMessage() {
-        const input = document.getElementById("user-input");
-        const message = input.value.trim().toLowerCase();
-        if (!message) return;
+chatToggle.addEventListener("click", () => { chatContainer.style.display = "flex"; });
+chatClose.addEventListener("click", () => { chatContainer.style.display = "none"; });
 
-        addMessage("user", input.value);
-        
-        let reply = "❓ Sorry, I don’t have an answer for that. Try 'contact support'.";
-        for (let key in responses) {
-            if (message.includes(key)) {
-                reply = responses[key];
-                break;
-            }
+document.getElementById("send-btn").addEventListener("click", sendMessage);
+document.getElementById("user-input").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") sendMessage();
+});
+
+function sendMessage() {
+    const input = document.getElementById("user-input");
+    const message = input.value.trim().toLowerCase();
+    if (!message) return;
+
+    addMessage("user", input.value);
+    
+    let reply = "❓ Sorry, I don’t have an answer for that. Try 'contact support'.";
+    for (let key in responses) {
+        if (message.includes(key)) {
+            reply = responses[key];
+            break;
         }
-
-        setTimeout(() => addMessage("bot", reply), 500);
-        input.value = "";
     }
 
-    function addMessage(sender, text) {
-        const chatBox = document.getElementById("chat-box");
-        const messageElement = document.createElement("div");
-        messageElement.className = `message ${sender}`;
-        messageElement.textContent = text;
-        chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
+    setTimeout(() => addMessage("bot", reply), 500);
+    input.value = "";
+}
+
+function addMessage(sender, text) {
+    const chatBox = document.getElementById("chat-box");
+    const messageElement = document.createElement("div");
+    messageElement.className = `message ${sender}`;
+    messageElement.textContent = text;
+    chatBox.appendChild(messageElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 </script>
+
 
 </body>
 </html>

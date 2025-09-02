@@ -6,16 +6,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
-      options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-          new MySqlServerVersion(new Version(8, 0, 36))));
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 36))));
 
+// Build app
 var app = builder.Build();
 
-// ✅ Add this block: seed the database
+// ✅ Step 2 + Step 3: Initialize + Seed database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
+
+    // Run migrations automatically (optional but useful)
+    context.Database.Migrate();
+
+    // Seed default users / data
     DbInitializer.Initialize(context);
 }
 
@@ -34,7 +41,6 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
-
 app.MapControllers();
 
 app.Run();

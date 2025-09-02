@@ -12,24 +12,25 @@
         <h1>Campus Cash Bank</h1>
         
         <form id="loginForm">
-    <div class="form-group">
-        <label for="StudentNumber">Student Number</label>
-        <input type="text" id="StudentNumber" required>
-        <span class="error" id="StudentNumberError"></span>
+            <div class="form-group">
+                <label for="StudentNumber">Student Number</label>
+                <input type="text" id="StudentNumber" required>
+                <span class="error" id="StudentNumberError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+                <span class="error" id="passwordError"></span>
+            </div>
+
+            <button type="submit" class="btn" id="loginButton">Login</button>
+        </form>
     </div>
 
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" required>
-        <span class="error" id="passwordError"></span>
-    </div>
-
-    <button type="submit" class="btn" id="loginButton">Login</button>
-</form>
-
-<script>
+    <script>
 document.getElementById('loginForm').addEventListener('submit', async function(event) {
-    event.preventDefault(); // Prevent form submission
+    event.preventDefault(); 
 
     // Clear previous error messages
     document.getElementById('StudentNumberError').innerText = "";
@@ -54,7 +55,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
     if (!isValid) return;
 
-    // Disable login button during processing
     const loginBtn = document.getElementById('loginButton');
     loginBtn.disabled = true;
     loginBtn.textContent = "Logging in...";
@@ -66,17 +66,26 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             body: JSON.stringify({ studentNumber, password })
         });
 
-        const data = await response.json(); // Always parse JSON
+        const data = await response.json();
 
         if (response.ok) {
-            // Store user info in localStorage
-            localStorage.setItem("user", JSON.stringify(data));
+            // ✅ Clear old user
+            localStorage.removeItem("campusCashUser");
 
-            // Redirect to home.html after successful login
+            // ✅ Store new user info
+            const userData = {
+                studentNumber: data.studentNumber,
+                fullName: data.fullName,
+                accountType: data.accountType,
+                accountNumber: data.accountNumber,  // Optional: home.html will generate if missing
+                balance: data.balance
+            };
+            localStorage.setItem("campusCashUser", JSON.stringify(userData));
+
+            // Redirect to home page
             window.location.href = "/HomePage/home.html";
         } else {
-            // Show error from backend
-            alert("❌ Login failed: " + data.message);
+            alert("❌ Login failed: " + (data.message || "Invalid credentials"));
         }
     } catch (err) {
         alert("❌ Login failed: " + err.message);
@@ -85,8 +94,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         loginBtn.textContent = "Login";
     }
 });
-
 </script>
+
 
 
 </body>

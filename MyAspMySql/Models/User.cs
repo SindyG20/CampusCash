@@ -13,7 +13,11 @@ namespace MyAspMySql.Models
         public DateTime DateOfBirth { get; set; }
         public string Address { get; set; } = "";
         public string ContactNumber { get; set; } = "";
-        public string AccountType { get; set; } = "Regular";
+
+        // 👇 New fields
+        public string AccountType { get; set; } = "";  // Chosen at registration
+        public string AccountNumber { get; set; } = ""; // Static unique number tied to StudentNumber
+        public decimal Balance { get; set; } = 0;       // Default balance is 0
 
         public string Username { get; set; } = "";
         public string Email { get; set; } = "";
@@ -21,6 +25,7 @@ namespace MyAspMySql.Models
         public string Role { get; set; } = "Student";
         public DateTime CreatedAt { get; set; }
 
-        public ICollection<Account> Accounts { get; set; }
-    }
+        // If you want to keep Accounts table
+        public ICollection<Account> Accounts { get; set; }
+    }
 }
