@@ -5,104 +5,152 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Campus Cash — Profile</title>
   <style>
-    :root{--bg:#f4f6f8;--card:#fff;--accent:#4a148c;--muted:#e0d7f3}
+    :root{--bg:#f4f6f8;--card:#fff;--accent:#0b74da;--muted:#6b7280}
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#111}
 
-    /* Top Purple Header */
-    .topbar{
-      background:var(--accent);
-      color:#fff;
-      padding:14px 24px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      box-shadow:0 4px 12px rgba(0,0,0,0.1);
-    }
-    .logo{display:flex;align-items:center;gap:12px}
-    .logo .brand{font-weight:700;font-size:1.25rem;color:#fff}
-    .logo img{border-radius:8px}
-    .nav{display:flex;gap:20px}
-    .nav a{text-decoration:none;color:#fff;font-weight:500;cursor:pointer;transition:.2s}
-    .nav a:hover{color:#d1c4e9}
-    .nav a.active{color:#d1c4e9;font-weight:700}
-
-    /* Main Container */
     .container{max-width:960px;margin:40px auto;padding:20px}
 
-    /* Profile Card */
-    .card{background:var(--card);border-radius:12px;box-shadow:0 6px 20px rgba(12,20,40,0.06);padding:24px;display:grid;grid-template-columns:140px 1fr;gap:20px;align-items:start;margin-bottom:20px}
-    .avatar{width:120px;height:120px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#ede7f6,#f3e5f5);display:flex;align-items:center;justify-content:center;font-size:3rem;color:#6b4ca0}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo .brand{font-weight:700;font-size:1.25rem}
+    .nav{display:flex;gap:16px}
+    .nav a{text-decoration:none;color:#374151;font-weight:500}
+    .nav a:hover{color:var(--accent)}
+
+    .card{background:var(--card);border-radius:12px;box-shadow:0 6px 20px rgba(12,20,40,0.06);padding:24px;display:grid;grid-template-columns:140px 1fr;gap:20px;align-items:start}
+
+    .avatar{width:120px;height:120px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#e6eefc,#f7fbff);display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--muted)}
+
     .info h2{margin:0 0 6px 0;font-size:1.25rem}
-    .info p{margin:0 4px 10px 0;color:#555}
-    .chip{background:#f3f4f6;padding:8px 12px;border-radius:999px;font-size:0.9rem;color:#374151;display:inline-block;margin-right:6px;margin-top:6px}
-    .details{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .details div{background:#f9f6fb;padding:10px 14px;border-radius:8px}
-    .details strong{display:block;font-size:.85rem;color:#555}
-    .details span{font-size:1rem;color:#111}
-    .btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600;text-decoration:none;display:inline-block;margin-top:20px}
-    .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(74,20,140,0.2)}
+    .info p{margin:0 4px 10px 0;color:var(--muted)}
+
+    .meta{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+    .meta .chip{background:#f3f4f6;padding:8px 12px;border-radius:999px;font-size:0.9rem;color:#374151}
+
+    .actions{display:flex;gap:8px;align-items:center;position:relative}
+    .btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(11,116,218,0.12)}
+
+    .settings-btn{background:transparent;border:0;cursor:pointer;padding:8px;border-radius:8px}
+    .dropdown{position:absolute;top:110%;right:0;background:var(--card);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.1);display:none;flex-direction:column;min-width:220px;z-index:50}
+    .dropdown button{background:none;border:0;padding:12px 16px;text-align:left;cursor:pointer;font-size:0.95rem;color:#111}
+    .dropdown button:hover{background:#f3f4f6}
+
+    .small{font-size:0.85rem;color:var(--muted)}
+
+    @media (max-width:700px){
+      .card{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
-  <!-- Purple Top Bar -->
-  <div class="topbar">
-    <div class="logo">
-      <img src="../indexFolder/logo.png" alt="Campus Cash Logo" width="40" height="40"/>
-      <div class="brand">Campus Cash</div>
-    </div>
-    <div class="nav">
-      <a href="../HomePage/home.html">Home</a>
-      <a href="../accounts/accounts.html">Accounts</a>
-      <a href="loginFolder/login.html">Logout</a>
-    </div>
-  </div>
-
   <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <img src="../indexFolder/logo.png" alt="Campus Cash Logo" width="40" height="40" style="border-radius:8px;background:linear-gradient(90deg,#0b74da,#00c6ff)"/>
+        <div class="brand">Campus Cash</div>
+      </div>
+      <div class="nav">
+        <a href="../HomePage/home.html">Home</a>
+        <a href="profile.html" class="active">Profile</a>
+      </div>
+      <div class="actions">
+        <button id="settingsToggle" class="btn" title="Settings">Settings ▾</button>
+        <div id="settingsDropdown" class="dropdown" role="menu" aria-hidden="true">
+          <button id="blockCard" role="menuitem">Block Card</button>
+          <button id="replaceCard" role="menuitem">Replace Card</button>
+          <button id="cardSettings" role="menuitem">Card Settings</button>
+          <button id="cardLimits" role="menuitem">Card Limits</button>
+          <button id="reportLost" role="menuitem">Report Lost / Stolen Card</button>
+        </div>
+        <button id="logout" class="btn secondary" title="Logout">Logout</button>
+      </div>
+    </div>
+
     <!-- Profile Card -->
-    <main class="card">
+    <main class="card" role="region" aria-label="User profile">
       <div>
-        <div id="avatar" class="avatar">--</div>
+        <div id="avatar" class="avatar" aria-hidden="true">--</div>
       </div>
       <div class="info">
         <h2 id="displayName">Loading...</h2>
         <p id="displayEmail"></p>
-        <div class="chip" id="displayNumber"></div>
-        <div class="chip">Member since: <span id="displaySince"></span></div>
-
-        <div class="details">
-          <div><strong>Student ID</strong><span id="displayId">--</span></div>
-          <div><strong>Student Number</strong><span id="displayNumberDetail">--</span></div>
-          <div><strong>Date of Birth</strong><span id="displayDOB">--</span></div>
-          <div><strong>Address</strong><span id="displayAddress">--</span></div>
-          <div><strong>Account Type</strong><span id="displayAccountType">--</span></div>
-          <div><strong>Created At</strong><span id="displayCreated">--</span></div>
+        <div class="meta">
+          <div class="chip">Student No: <span id="displayNumber">--</span></div>
+          <div class="chip">Member since: <span id="displaySince"></span></div>
         </div>
-
-        <a href="../HomePage/home.html" class="btn secondary">← Back to Home</a>
+        <p class="small"><strong>Address:</strong> <span id="displayAddress"></span></p>
       </div>
     </main>
   </div>
 
   <script>
-    const userData = JSON.parse(localStorage.getItem("campusCashUser"));
+    const storageKey = "user"; // LocalStorage key
+
+    // Format date
+    function formatDate(iso){
+      if(!iso) return "--";
+      return new Date(iso).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+    }
+
+    // Get initials
     function initials(name){
       if(!name) return "--";
       return name.split(" ").map(n=>n[0]||"").join("").toUpperCase();
     }
-    if(userData){
-      document.getElementById("displayName").textContent = userData.fullName || "Student";
-      document.getElementById("displayEmail").textContent = userData.email || "";
-      document.getElementById("displayNumber").textContent = "Student No: " + (userData.studentNumber || "--");
-      document.getElementById("displayId").textContent = userData.studentId || "--";
-      document.getElementById("displayNumberDetail").textContent = userData.studentNumber || "--";
-      document.getElementById("displayDOB").textContent = userData.dateOfBirth || "--";
-      document.getElementById("displayAddress").textContent = userData.address || "--";
-      document.getElementById("displayAccountType").textContent = userData.accountType || "--";
-      document.getElementById("displayCreated").textContent = new Date(userData.createdAt).toLocaleString();
-      document.getElementById("displaySince").textContent = new Date(userData.createdAt).toLocaleDateString();
-      document.getElementById("avatar").textContent = initials(userData.fullName);
+
+    // Load user
+    function loadUser(){
+      let profile = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      if(!profile || Object.keys(profile).length===0){
+        profile = {
+          fullName:"Demo User",
+          email:"demo@example.com",
+          studentNumber:"123456",
+          address:"Campus Street, City",
+          createdAt:new Date().toISOString()
+        };
+      }
+      document.getElementById("displayName").textContent = profile.fullName || "User";
+      document.getElementById("displayEmail").textContent = profile.email || "";
+      document.getElementById("displayNumber").textContent = profile.studentNumber || "--";
+      document.getElementById("displayAddress").textContent = profile.address || "--";
+      document.getElementById("displaySince").textContent = formatDate(profile.createdAt);
+      document.getElementById("avatar").textContent = initials(profile.fullName);
     }
+
+    // Settings dropdown
+    const settingsToggle = document.getElementById("settingsToggle");
+    const settingsDropdown = document.getElementById("settingsDropdown");
+    settingsToggle.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      const show = settingsDropdown.style.display === "flex";
+      settingsDropdown.style.display = show ? "none" : "flex";
+    });
+    document.addEventListener("click",(e)=>{
+      if(!settingsDropdown.contains(e.target) && e.target!==settingsToggle){
+        settingsDropdown.style.display="none";
+      }
+    });
+
+    // Navigation to actual pages
+  
+    document.getElementById("blockCard").addEventListener("click",()=>window.location.href="block-card.html");
+    document.getElementById("replaceCard").addEventListener("click",()=>window.location.href="Replace-card.html");
+    document.getElementById("cardSettings").addEventListener("click",()=>window.location.href="cardSettings.html");
+    document.getElementById("cardLimits").addEventListener("click",()=>window.location.href="cardLimits.html");
+    document.getElementById("reportLost").addEventListener("click",()=>window.location.href="report-lost.html");
+
+    // Logout
+    document.getElementById("logout").addEventListener("click",()=>{
+      localStorage.removeItem(storageKey);
+      window.location.href="../loginFolder/login.html";
+    });
+
+    // Run
+    loadUser();
   </script>
 </body>
 </html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    background: #ecf0f1;
+  }
+  .sidebar {
+    width: 220px;
+    background: #2c3e50;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 20px;
+  }
+  .sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 20px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+    cursor: pointer;
+  }
+  .sidebar a:hover {
+    background: #34495e;
+  }
+  .sidebar a.active {
+    background: #2980b9;
+  }
+  .content {
+    margin-left: 220px;
+    padding: 20px;
+    flex: 1;
+  }
+  .stats {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    flex: 1;
+    text-align: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  }
+  .stat-box h3 { margin: 0; font-size: 16px; color: #555; }
+  .stat-box .number { font-size: 28px; font-weight: bold; color: #2c3e50; }
+  .help-form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    max-width: 500px;
+  }
+  .help-form input, .help-form textarea, .help-form select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  .help-form button {
+    padding: 12px 20px;
+    background: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .help-form button:hover {
+    background: #1c5980;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background:white;
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 3px 8px rgba(0,0,0,0.1);
+  }
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background:#2980b9;
+    color:white;
+    text-align:left;
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>Employee Menu</h2>
+  <a class="active" data-target="reports"><i class="fas fa-chart-line"></i> Generate Reports</a>
+  <a data-target="help"><i class="fas fa-hands-helping"></i> System Help & Requests</a>
+  
+  <a href="employee-index.html"><i class="fas fa-arrow-left"></i> Logout</a>
+</div>
+
+<div class="content">
+  <!-- Reports Section -->
+  <div class="section" id="reports">
+    <h1>Student Reports</h1>
+
+    <!-- Search and Filter -->
+    <div style="margin-bottom: 20px;">
+      <input type="text" id="searchInput" placeholder="Search by student name..." style="padding: 10px; width: 250px; border-radius: 6px; border: 1px solid #ccc; margin-right: 10px;">
+      <select id="statusFilter" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+        <option value="all">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+      </select>
+      <button onclick="renderTable()" style="padding: 10px 15px; background:#2980b9; color:white; border:none; border-radius:6px; cursor:pointer;">Filter</button>
+    </div>
+
+    <!-- Stats Boxes -->
+    <div class="stats">
+      <div class="stat-box">
+        <h3>Total Students</h3>
+        <div class="number" id="totalStudents">0</div>
+      </div>
+      <div class="stat-box">
+        <h3>New This Month</h3>
+        <div class="number" id="newStudents">0</div>
+      </div>
+      <div class="stat-box">
+        <h3>Pending Approvals</h3>
+        <div class="number" id="pendingStudents">0</div>
+      </div>
+    </div>
+
+    <!-- Student Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Status</th>
+          <th>Date Registered</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Populated dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Help Section -->
+  <div class="section" id="help" style="display:none;">
+    <h1>System Help & Requests</h1>
+    <div class="help-form">
+      <p>If you experience any issues with the system or need assistance, please fill out this form:</p>
+      <form id="helpRequestForm">
+        <label for="issueType">Issue Type:</label>
+        <select id="issueType" required>
+          <option value="">Select an issue</option>
+          <option value="login">Login / Access</option>
+          <option value="studentData">Student Data</option>
+          <option value="systemError">System Error</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label for="description">Description:</label>
+        <textarea id="description" rows="4" placeholder="Describe the issue" required></textarea>
+
+        <button type="submit"><i class="fas fa-paper-plane"></i> Submit Request</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Sidebar navigation
+const sidebarLinks = document.querySelectorAll('.sidebar a[data-target]');
+const sections = document.querySelectorAll('.section');
+
+sidebarLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    sidebarLinks.forEach(l => l.classList.remove('active'));
+    sections.forEach(s => s.style.display = 'none');
+
+    link.classList.add('active');
+    const target = link.getAttribute('data-target');
+    document.getElementById(target).style.display = 'block';
+  });
+});
+
+
+
+// Populate table and stats
+function renderTable() {
+  const searchText = document.getElementById('searchInput').value.toLowerCase();
+  const statusFilter = document.getElementById('statusFilter').value;
+
+  const filtered = exampleStudents.filter(student => {
+    const matchesName = student.name.toLowerCase().includes(searchText);
+    const matchesStatus = statusFilter === 'all' || student.status === statusFilter;
+    return matchesName && matchesStatus;
+  });
+
+  const tableBody = document.getElementById('tableBody');
+  tableBody.innerHTML = '';
+  filtered.forEach(student => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${student.name}</td>
+      <td>${student.status}</td>
+      <td>${student.createdAt}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+
+  // Update stats
+  const now = new Date();
+  const thisMonth = now.getMonth();
+  const thisYear = now.getFullYear();
+
+  const newThisMonth = exampleStudents.filter(s => {
+    const created = new Date(s.createdAt);
+    return created.getMonth() === thisMonth && created.getFullYear() === thisYear;
+  }).length;
+
+  const pending = exampleStudents.filter(s => s.status.toLowerCase() === 'pending').length;
+
+  document.getElementById("totalStudents").innerText = exampleStudents.length;
+  document.getElementById("newStudents").innerText = newThisMonth;
+  document.getElementById("pendingStudents").innerText = pending;
+}
+
+// Initial render
+renderTable();
+document.getElementById('searchInput').addEventListener('input', renderTable);
+document.getElementById('statusFilter').addEventListener('change', renderTable);
+
+// Handle help form submission
+document.getElementById("helpRequestForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  alert("Help request submitted! Our support team will contact you shortly.");
+  this.reset();
+});
+</script>
+
+</body>
+</html>
+
+
