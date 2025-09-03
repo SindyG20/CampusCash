@@ -273,3 +273,15 @@ C:\Users\admin\OneDrive\Documents\CampusCash\CampusApp\Campus.Api\obj\Debug\net8
 C:\Users\admin\OneDrive\Documents\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.pdb
 C:\Users\admin\OneDrive\Documents\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.genruntimeconfig.cache
 C:\Users\admin\OneDrive\Documents\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\ref\Campus.Api.dll
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.csproj.AssemblyReference.cache
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.AssemblyInfoInputs.cache
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.AssemblyInfo.cs
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.csproj.CoreCompileInputs.cache
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.sourcelink.json
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.dll
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\refint\Campus.Api.dll
+C:\Users\shihl\OneDrive - North-West University\CampusCash\CampusApp\Campus.Api\obj\Debug\net8.0\Campus.Api.pdb
