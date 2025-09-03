@@ -38,7 +38,6 @@
         <div class="brand">Campus Cash</div>
       </div>
       <div class="nav">
-        <a href="../HomePage/home.html">Home</a>
         <a href="logOut.html">Logout</a>
       </div>
     </div>
@@ -63,30 +62,34 @@
           <div><strong>Created At</strong><span id="displayCreated">--</span></div>
         </div>
 
-        <a href="../HomePage/home.html" class="btn secondary">← Back to Home</a>
+        <a href="/HomePage/home.html" class="btn secondary">← Back to Home</a>
       </div>
     </main>
   </div>
 
   <script>
-    const userData = JSON.parse(localStorage.getItem("campusCashUser"));
-    function initials(name){
-      if(!name) return "--";
-      return name.split(" ").map(n=>n[0]||"").join("").toUpperCase();
-    }
-    if(userData){
-      document.getElementById("displayName").textContent = userData.fullName || "Student";
-      document.getElementById("displayEmail").textContent = userData.email || "";
-      document.getElementById("displayNumber").textContent = "Student No: " + (userData.studentNumber || "--");
-      document.getElementById("displayId").textContent = userData.studentId || "--";
-      document.getElementById("displayNumberDetail").textContent = userData.studentNumber || "--";
-      document.getElementById("displayDOB").textContent = userData.dateOfBirth || "--";
-      document.getElementById("displayAddress").textContent = userData.address || "--";
-      document.getElementById("displayAccountType").textContent = userData.accountType || "--";
-      document.getElementById("displayCreated").textContent = new Date(userData.createdAt).toLocaleString();
-      document.getElementById("displaySince").textContent = new Date(userData.createdAt).toLocaleDateString();
-      document.getElementById("avatar").textContent = initials(userData.fullName);
-    }
-  </script>
+  const userData = JSON.parse(localStorage.getItem("campusCashUser"));
+  function initials(name){
+    if(!name) return "--";
+    return name.split(" ").map(n=>n[0]||"").join("").toUpperCase();
+  }
+  if(userData){
+    document.getElementById("displayName").textContent = userData.fullName || "Student";
+    document.getElementById("displayEmail").textContent = userData.email || "";
+    document.getElementById("displayNumber").textContent = "Student No: " + (userData.studentNumber || "--");
+    document.getElementById("displayId").textContent = userData.studentId || "--";
+    document.getElementById("displayNumberDetail").textContent = userData.studentNumber || "--";
+
+    // ✅ Fixed Date of Birth (consistent key)
+    document.getElementById("displayDOB").textContent = userData.dateOfBirth || "--";
+
+    document.getElementById("displayAddress").textContent = userData.address || "--";
+    document.getElementById("displayAccountType").textContent = userData.accountType || "--";
+    document.getElementById("displayCreated").textContent = new Date(userData.createdAt).toLocaleString();
+    document.getElementById("displaySince").textContent = new Date(userData.createdAt).toLocaleDateString();
+    document.getElementById("avatar").textContent = initials(userData.fullName);
+  }
+</script>
+
 </body>
 </html>

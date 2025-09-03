@@ -228,11 +228,10 @@
         <nav class="top-nav">
             <ul>
                 <li><a href="home.html">Home</a></li>
-                <li><a href="accountInfo.html">Account</a></li>
                 <li><a href="Transactions.html">Transactions</a></li>
-                <li><a href="appointments.html" class="active">Appointments</a></li>
                 <li><a href="profile.html">Profile</a></li>
                 <li><a href="reports.html">Reports</a></li>
+                <li><a href = "block-card.html">Block Card</a></li>
             </ul>
         </nav>
     </header>
@@ -292,7 +291,6 @@
             <div class="footer-section">
                 <h4>Quick Links</h4>
                 <a href="home.html">Home</a>
-                <a href="#">Account</a>
                 <a href="Transactions.html">Transactions</a>
             </div>
             <div class="footer-section">
@@ -357,7 +355,7 @@
             purpose: document.getElementById('purpose').value
         };
 
-        // Add to array and save to localStorage
+        // save to localStorage
         appointments.push(appointment);
         localStorage.setItem('appointments', JSON.stringify(appointments));
 

@@ -1,19 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Transaction History - Campus Cash Bank</title>
-  <link rel="stylesheet" href="reports.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Cash Bank - Reports</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header.site-header {
+      background-color: #4b0082;
+      padding: 20px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .top-nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    .top-nav li {
+      margin-left: 20px;
+    }
+
+    .top-nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .top-nav a:hover {
+      text-decoration: underline;
+    }
+
+    main.content {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #4b0082;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #4b0082;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f4f4f4;
+    }
+
+    footer.footer {
+      background-color: #2c2c2c;
+      color: white;
+      padding: 30px 20px;
+      margin-top: 40px;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .footer-section {
+      flex: 1 1 200px;
+      margin: 10px 0;
+    }
+
+    .footer-section h4 {
+      margin-bottom: 10px;
+    }
+
+    .footer-section a {
+      color: #ccc;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .footer-section a:hover {
+      color: white;
+    }
+  </style>
 </head>
 <body>
-
   <!-- Header -->
   <header class="site-header">
     <div class="logo">Campus Cash Bank</div>
     <nav class="top-nav">
       <ul>
         <li><a href="home.html">Home</a></li>
+        <li><a href="accountInfo.html">Account</a></li>
         <li><a href="transactions.html">Transactions</a></li>
         <li><a href="appointments.html">Appointments</a></li>
         <li><a href="profile.html">Profile</a></li>
@@ -22,35 +130,24 @@
     </nav>
   </header>
 
+  <!-- Main -->
   <main class="content">
-    <section class="transaction-container">
-      <h2>Transaction History</h2>
-
-      <div class="filter-bar">
-        <input type="date" id="filter-date" onchange="filterTable()" />
-        <select id="filter-type" onchange="filterTable()">
-          <option value="">All Types</option>
-          <option value="deposit">Deposit</option>
-          <option value="withdraw">Withdrawal</option>
-          <option value="transfer">Transfer</option>
-        </select>
-      </div>
-
-      <table id="transactionTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Amount (R)</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Transactions will load here -->
-        </tbody>
-      </table>
-    </section>
+    <h2>Transaction History</h2>
+    <table id="reportsTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Amount (R)</th>
+          <th>From Account</th>
+          <th>To Account</th>
+          <th>Balance After (R)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Filled dynamically -->
+      </tbody>
+    </table>
   </main>
 
   <!-- Footer -->
@@ -59,14 +156,14 @@
       <div class="footer-section">
         <h4>Quick Links</h4>
         <a href="home.html">Home</a>
-        <a href="#">Account</a>
+        <a href="accountInfo.html">Account</a>
         <a href="transactions.html">Transactions</a>
       </div>
       <div class="footer-section">
         <h4>Contact Us</h4>
         <p>Email: support@campuscashbank.co.za</p>
-        <p>Phone: +27 12 413 7159</p>
-        <p>Location: NWU Vanderbijlpark, SA</p>
+        <p>Phone: +27 12 345 6789</p>
+        <p>Location: NWU Potchefstroom, SA</p>
       </div>
     </div>
     <div style="text-align:center; margin-top: 20px;">
@@ -74,55 +171,28 @@
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script>
-    // Redirect if no user is logged in
-    const currentUser = JSON.parse(localStorage.getItem("campusCashUser"));
-    if (!currentUser) {
-      alert("Please log in first.");
-      window.location.href = "login.html";
-    }
+    const reportsTableBody = document.querySelector('#reportsTable tbody');
+    let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
 
-    // Use the SAME transactions key as transactions.html
-    const transactions = JSON.parse(localStorage.getItem("transactions") || "[]");
-
-    function renderTransactions() {
-      const tbody = document.querySelector("#transactionTable tbody");
-      tbody.innerHTML = "";
-
-      // Render newest transactions first
-      transactions.slice().reverse().forEach(tx => {
-        const row = document.createElement("tr");
+    function updateReportsTable() {
+      reportsTableBody.innerHTML = '';
+      transactions.forEach(tx => {
+        const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${tx.date}</td>
-          <td>R${parseFloat(tx.amount).toFixed(2)}</td>
-          <td>${tx.from || "-"}</td>
-          <td>${tx.to || "-"}</td>
-          <td>${tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</td>
+          <td>${new Date(tx.date).toLocaleString()}</td>
+          <td>${tx.type}</td>
+          <td>${tx.amount.toFixed(2)}</td>
+          <td>${tx.from || '-'}</td>
+          <td>${tx.to || '-'}</td>
+          <td>${tx.balanceAfter ? tx.balanceAfter.toFixed(2) : '-'}</td>
         `;
-        tbody.appendChild(row);
+        reportsTableBody.appendChild(row);
       });
     }
 
-    function filterTable() {
-      const date = document.getElementById("filter-date").value;
-      const type = document.getElementById("filter-type").value;
-
-      const rows = document.querySelectorAll("#transactionTable tbody tr");
-      rows.forEach(row => {
-        const rowDate = row.cells[0].textContent;
-        const rowType = row.cells[4].textContent.toLowerCase();
-
-        let show = true;
-        if (date && !rowDate.includes(date)) show = false;
-        if (type && rowType !== type) show = false;
-
-        row.style.display = show ? "" : "none";
-      });
-    }
-
-    // Render transactions on page load
-    renderTransactions();
+    updateReportsTable();
   </script>
-
 </body>
 </html>

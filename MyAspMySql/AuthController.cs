@@ -69,7 +69,10 @@ public IActionResult Register([FromBody] User userDto)
             {
                 user.Username,
                 user.Email,
-                Balance = account?.Balance ?? 0
+                Balance = account?.Balance ?? 0,
+                user.DateOfBirth,
+                user.CreatedAt,
+                user.Address
             });
         }
 

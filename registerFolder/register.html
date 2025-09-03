@@ -82,18 +82,25 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                studentId: document.getElementById("StudentID").value,
-                studentNumber: document.getElementById("StudentNumber").value,
-                fullName: document.getElementById("FullName").value,
-                dateOfBirth: document.getElementById("DOB").value,
-                address: document.getElementById("Address").value,
-                accountType: document.getElementById("AccountType").value,
-                email: document.getElementById("email").value,
-                passwordHash: pwd,
+    studentId: document.getElementById("StudentID").value,
+    studentNumber: document.getElementById("StudentNumber").value,
+    fullName: document.getElementById("FullName").value,
+    dateOfBirth: document.getElementById("DOB").value,
+    address: document.getElementById("Address").value,
+    accountType: document.getElementById("AccountType").value,
+    email: document.getElementById("email").value,
 
-                // ✅ Step 1: Add account creation date
-                createdAt: new Date().toISOString()
-            })
+    // ✅ Fix for Account Number
+    accountNumber: document.getElementById("AccountNumber") 
+        ? document.getElementById("AccountNumber").value 
+        : "AC" + Math.floor(1000000000 + Math.random() * 9000000000),
+
+    passwordHash: pwd,
+
+    // ✅ Step 1: Add account creation date
+    createdAt: new Date().toISOString()
+})
+
         });
 
         if (response.ok) {
