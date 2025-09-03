@@ -2839,23 +2839,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\mmakg\\.nuget\\packages\\": {},
+    "C:\\Users\\shihl\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mmakg\\OneDrive\\Desktop\\CampusCash\\MyAspMySql\\MyAspMySql.csproj",
+      "projectUniqueName": "C:\\Users\\shihl\\OneDrive - North-West University\\CampusCash\\MyAspMySql\\MyAspMySql.csproj",
       "projectName": "MyAspMySql",
-      "projectPath": "C:\\Users\\mmakg\\OneDrive\\Desktop\\CampusCash\\MyAspMySql\\MyAspMySql.csproj",
-      "packagesPath": "C:\\Users\\mmakg\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mmakg\\OneDrive\\Desktop\\CampusCash\\MyAspMySql\\obj\\",
+      "projectPath": "C:\\Users\\shihl\\OneDrive - North-West University\\CampusCash\\MyAspMySql\\MyAspMySql.csproj",
+      "packagesPath": "C:\\Users\\shihl\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\shihl\\OneDrive - North-West University\\CampusCash\\MyAspMySql\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\mmakg\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\shihl\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -2923,7 +2923,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

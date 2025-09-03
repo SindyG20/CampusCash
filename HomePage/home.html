@@ -324,16 +324,69 @@
 </div>
 
 <script>
-    // Account number generator
-    const accNum = Math.floor(10000000 + Math.random() * 90000000);
-    document.getElementById('accNum').innerText = accNum;
+async function loadUserData() {
+    const storageKey = "campusCashUser";
 
-    // Update welcome message in hero
+    // DEBUG: show every key and the stored value before doing anything
+    console.log("Home page load — localStorage keys:", Object.keys(localStorage));
+    console.log("Home page load — raw campusCashUser:", localStorage.getItem(storageKey));
+
+    let raw = localStorage.getItem(storageKey);
+    if (!raw) {
+        console.warn("⚠️ No campusCashUser found in localStorage. Redirecting to login...");
+        // show a short message to the user (optional) then redirect to login in parent folder
+        // home.html is in HomePage/, login.html is at site root so go up one level:
+        window.location.href = "loginFolder/login.html";
+        return;
+    }
+
+    let user;
+    try {
+        user = JSON.parse(raw);
+    } catch (err) {
+        console.error("⚠️ Failed to parse campusCashUser from localStorage:", err);
+        localStorage.removeItem(storageKey);
+        window.location.href = "loginFolder/login.html";
+        return;
+    }
+
+    if (!user || !user.studentNumber) {
+        console.warn("⚠️ campusCashUser missing studentNumber. Redirecting to login...");
+        console.log("campusCashUser value:", user);
+        window.location.href = "loginFolder/login.html";
+        return;
+    }
+
+    // Try to fetch fresh account info from your backend (use same port as login)
+    try {
+        const response = await fetch(`http://localhost:5264/api/accounts/${user.studentNumber}`);
+        if (response.ok) {
+            const fresh = await response.json();
+            user = { ...user, ...fresh }; // merge any fresh data
+            localStorage.setItem(storageKey, JSON.stringify(user));
+            console.log("✅ Refreshed account data from backend:", fresh);
+        } else {
+            console.warn("⚠️ Account fetch returned status:", response.status);
+        }
+    } catch (err) {
+        console.warn("⚠️ Could not fetch account data (network/CORS?). Using stored data. Error:", err);
+    }
+
+    // Update UI
+    document.getElementById("fullName").innerText = user.fullName || "N/A";
+    document.getElementById("studentNumber").innerText = user.studentNumber || "N/A";
+    document.getElementById("accountType").innerText = user.accountType || "N/A";
+    document.getElementById("accountNumber").innerText = user.accountNumber || "N/A";
+    document.getElementById("balance").innerText = user.balance ? parseFloat(user.balance).toFixed(2) : "0.00";
+
     const heroHeading = document.querySelector(".hero h1");
-    if (user.fullName) heroHeading.textContent = `Welcome, ${user.fullName}!`;
+    heroHeading.textContent = `Welcome, ${user.fullName || "Student"}!`;
 }
+
+loadUserData();
+
 /* -------------------
-   Chatbot logic
+   Chatbot logic (unchanged)
 ------------------- */
 const responses = {
     "how do i top up": "💳 You can top up your Campus Cash at the finance office or online via the student portal.",
@@ -361,7 +414,7 @@ function sendMessage() {
     if (!message) return;
 
     addMessage("user", input.value);
-    
+
     let reply = "❓ Sorry, I don’t have an answer for that. Try 'contact support'.";
     for (let key in responses) {
         if (message.includes(key)) {
@@ -383,6 +436,10 @@ function addMessage(sender, text) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 </script>
+
+
+
+
 
 
 </body>

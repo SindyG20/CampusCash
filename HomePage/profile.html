@@ -76,13 +76,13 @@
         <div id="avatar" class="avatar" aria-hidden="true">SG</div>
       </div>
       <div class="info">
-        <h2 id="displayName">Sindy Gumede</h2>
-        <p id="displayEmail">sindyg@example.com</p>
-        <div class="meta">
-          <div class="chip" id="displayPhone">+27 82 123 4567</div>
-          <div class="chip" id="displayMember">Member since: <span id="displaySince">2024-05-02</span></div>
-        </div>
-        <p class="small" id="displayAddress">123 Rose Street, Johannesburg</p>
+        <div id="avatar" class="avatar" aria-hidden="true">--</div>
+<h2 id="displayName">Loading...</h2>
+<p id="displayEmail"></p>
+<div class="chip" id="displayPhone"></div>
+<div class="chip" id="displayMember">Member since: <span id="displaySince"></span></div>
+<p class="small" id="displayAddress"></p>
+
       </div>
     </main>
 
@@ -135,20 +135,16 @@ function formatDate(isoDate){
   return date.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
 }
 
-// Build a full name from backend or localStorage
+// Build a full name from localStorage
 function getFullName(profile){
-  // Try fullName
   if(profile.fullName && profile.fullName.trim()) return profile.fullName.trim();
 
-  // Try firstName + lastName
   const first = profile.firstName || '';
   const last = profile.lastName || '';
   if(first || last) return (first + ' ' + last).trim();
 
-  // As last resort, try email prefix
   if(profile.email) return profile.email.split('@')[0];
 
-  // Fallback
   return 'User';
 }
 
@@ -166,22 +162,42 @@ function updateDisplay(profile){
   document.getElementById('avatar').textContent = initials;
 }
 
-// Load user from backend or localStorage
+// Clear old localStorage if needed
+function resetLocalStorageIfOld(){
+  const oldUser = JSON.parse(localStorage.getItem(storageKey) || '{}');
+  if(oldUser.displayName === "Sindy Gumede" || !oldUser.studentNumber){
+    localStorage.removeItem(storageKey);
+  }
+}
+
+// Load user from localStorage (or backend if available)
 async function loadUser(){
+  resetLocalStorageIfOld(); // remove stale data
+
   let currentUser = JSON.parse(localStorage.getItem(storageKey) || '{}');
 
-  // Ensure createdAt exists
-  if(!currentUser.createdAt) currentUser.createdAt = new Date().toISOString();
+  // If localStorage is empty, show placeholder
+  if(!currentUser || Object.keys(currentUser).length === 0){
+    console.warn("No user found in localStorage. Using placeholder.");
+    currentUser = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      contactNumber: '',
+      address: '',
+      createdAt: new Date().toISOString()
+    };
+  }
 
+  // If studentNumber exists, fetch from backend
   if(currentUser.studentNumber){
     try{
       const res = await fetch(`http://localhost:5264/api/users/${currentUser.studentNumber}`);
       if(res.ok){
         const userFromDB = await res.json();
 
-        // Ensure name fields exist
         userFromDB.createdAt = userFromDB.createdAt || currentUser.createdAt;
-        userFromDB.fullName = userFromDB.fullName || currentUser.fullName || `${currentUser.firstName||''} ${currentUser.lastName||''}`.trim();
+        userFromDB.fullName = userFromDB.fullName || `${userFromDB.firstName||''} ${userFromDB.lastName||''}`.trim();
 
         currentUser = userFromDB;
         localStorage.setItem(storageKey, JSON.stringify(currentUser));
@@ -194,9 +210,55 @@ async function loadUser(){
   updateDisplay(currentUser);
 }
 
+// Dropdown toggle
+const settingsToggle = document.getElementById('settingsToggle');
+const settingsDropdown = document.getElementById('settingsDropdown');
+
+settingsToggle.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const isVisible = settingsDropdown.style.display === 'flex';
+  settingsDropdown.style.display = isVisible ? 'none' : 'flex';
+});
+
+// Close dropdown if clicked outside
+document.addEventListener('click', (e) => {
+  if (!settingsDropdown.contains(e.target) && e.target !== settingsToggle) {
+    settingsDropdown.style.display = 'none';
+  }
+});
+
+// Dropdown item links
+document.getElementById('editProfile').addEventListener('click', () => {
+  document.getElementById('modalBackdrop').style.display = 'flex';
+  settingsDropdown.style.display = 'none'; // change to your edit profile page
+});
+
+document.getElementById('blockCard').addEventListener('click', () => {
+  window.location.href = 'block-card.html'; // change to your block card page
+});
+
+document.getElementById('replaceCard').addEventListener('click', () => {
+  window.location.href = 'Replace-card.html'; // change to your replace card page
+});
+
+document.getElementById('cardSettings').addEventListener('click', () => {
+  window.location.href = 'cardSettings.html'; // change to your card settings page
+});
+
+document.getElementById('cardLimits').addEventListener('click', () => {
+  window.location.href = 'cardLimits.html'; // change to your card limits page
+});
+
+document.getElementById('reportLost').addEventListener('click', () => {
+  window.location.href = 'report-lost.html'; // change to your lost/stolen card page
+});
+
+
+
 // Run on page load
 loadUser();
 </script>
+
 
 
 
