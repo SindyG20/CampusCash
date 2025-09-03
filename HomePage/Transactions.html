@@ -159,143 +159,119 @@
     </footer>
 
     <script>
-        // Load stored accounts or initialize with default balances
-        const defaultAccounts = { main: 1245.50, savings: 3720.25 };
-
-        function loadAccounts() {
-            return JSON.parse(localStorage.getItem('accounts') || JSON.stringify(defaultAccounts));
+        // ------------------------------
+        // Load user data from localStorage
+        // ------------------------------
+        let user = JSON.parse(localStorage.getItem("campusCashUser"));
+        if (!user) {
+            alert("⚠️ Please log in first.");
+            window.location.href = "login.html";
         }
 
-        function saveAccounts(accounts) {
-            localStorage.setItem('accounts', JSON.stringify(accounts));
-        }
+        // Initialize accounts (main balance comes from user)
+        let accounts = JSON.parse(localStorage.getItem("accounts")) || {
+            main: user.balance || 0,
+            savings: 0
+        };
 
-        function loadTransactions() {
-            return JSON.parse(localStorage.getItem('transactions') || '[]');
+        function saveAccounts() {
+            localStorage.setItem("accounts", JSON.stringify(accounts));
+            // keep user.balance in sync with main account
+            user.balance = accounts.main;
+            localStorage.setItem("campusCashUser", JSON.stringify(user));
         }
-
-        function saveTransactions(transactions) {
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-        }
-
-        const transactionList = document.querySelector('.transaction-list');
 
         function renderBalances() {
-            const acc = loadAccounts();
-            document.querySelector('.account-card .account-balance').textContent = `R${acc.main.toFixed(2)}`;
-            document.querySelector('.account-card.secondary .account-balance').textContent = `R${acc.savings.toFixed(2)}`;
+            document.getElementById("main-account-number").textContent = user.accountNumber || "N/A";
+            document.getElementById("main-balance").textContent = `R${accounts.main.toFixed(2)}`;
+            document.getElementById("savings-balance").textContent = `R${accounts.savings.toFixed(2)}`;
         }
 
-        function renderTransactions() {
-            const transactions = loadTransactions();
-            transactionList.innerHTML = '';
-            transactions.slice().reverse().forEach(tx => {
-            const item = document.createElement('div');
-            item.className = `transaction-item ${tx.type}`;
-            item.innerHTML = `
-                <div class="transaction-details">
-                <span class="transaction-type">${tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</span>
-                <span class="transaction-date">${tx.date}</span>
-                </div>
-                <div class="transaction-amount">${tx.type === 'deposit' ? '+' : '-'}R${parseFloat(tx.amount).toFixed(2)}</div>
-            `;
-            transactionList.appendChild(item);
-            });
-        }
-
-        function addTransaction(type, fromAcc, toAcc, amount) {
-            const accounts = loadAccounts();
-            const amt = parseFloat(amount);
-
-            if(type === 'deposit') accounts[toAcc] += amt;
-            else if(type === 'withdraw') {
-            if(amt > accounts[fromAcc]) { alert('Insufficient funds!'); return; }
-            accounts[fromAcc] -= amt;
-            }
-            else if(type === 'transfer') {
-            if(amt > accounts[fromAcc]) { alert('Insufficient funds!'); return; }
-            accounts[fromAcc] -= amt;
-            if(toAcc !== 'external') accounts[toAcc] += amt;
-            }
-
-            saveAccounts(accounts);
-
-            const now = new Date();
-            const date = now.toLocaleDateString('en-ZA', {month:'short', day:'numeric', year:'numeric'});
-            const tx = { type, from: fromAcc, to: toAcc, amount: amt, date };
-            const transactions = loadTransactions();
-            transactions.push(tx);
-            saveTransactions(transactions);
-
+        // ------------------------------
+        // Transaction functions
+        // ------------------------------
+        function deposit(toAcc, amount) {
+            accounts[toAcc] += amount;
+            saveAccounts();
             renderBalances();
-            renderTransactions();
+            alert(`✅ Deposit of R${amount.toFixed(2)} to ${toAcc} successful!`);
         }
 
-        // Tab switching
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        const forms = document.querySelectorAll('.transaction-form');
-        tabButtons.forEach(btn => btn.addEventListener('click', () => {
-            tabButtons.forEach(b => b.classList.remove('active'));
-            forms.forEach(f => f.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById(`${btn.dataset.transaction}-form`).classList.add('active');
+        function withdraw(fromAcc, amount) {
+            if (amount > accounts[fromAcc]) {
+                alert("❌ Insufficient funds!");
+                return false;
+            }
+            accounts[fromAcc] -= amount;
+            saveAccounts();
+            renderBalances();
+            alert(`✅ Withdrawal of R${amount.toFixed(2)} from ${fromAcc} successful!`);
+            return true;
+        }
+
+        function transfer(fromAcc, toAcc, amount) {
+            if (amount > accounts[fromAcc]) {
+                alert("❌ Insufficient funds!");
+                return false;
+            }
+            accounts[fromAcc] -= amount;
+            if (toAcc !== "external") {
+                accounts[toAcc] += amount;
+            }
+            saveAccounts();
+            renderBalances();
+            alert(`✅ Transfer of R${amount.toFixed(2)} from ${fromAcc} to ${toAcc} successful!`);
+            return true;
+        }
+
+        // ------------------------------
+        // Event Listeners
+        // ------------------------------
+        document.getElementById("deposit-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const toAcc = document.getElementById("deposit-account").value;
+            const amount = parseFloat(document.getElementById("deposit-amount").value);
+            if (amount > 0) deposit(toAcc, amount);
+            this.reset();
+        });
+
+        document.getElementById("withdraw-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const fromAcc = document.getElementById("withdraw-account").value;
+            const amount = parseFloat(document.getElementById("withdraw-amount").value);
+            if (amount > 0) withdraw(fromAcc, amount);
+            this.reset();
+        });
+
+        document.getElementById("transfer-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const fromAcc = document.getElementById("transfer-from").value;
+            const toAcc = document.getElementById("transfer-to").value;
+            const amount = parseFloat(document.getElementById("transfer-amount").value);
+            if (amount > 0) transfer(fromAcc, toAcc, amount);
+            this.reset();
+        });
+
+        // External account field toggle
+        document.getElementById("transfer-to").addEventListener("change", function() {
+            document.getElementById("external-account-group").style.display =
+                this.value === "external" ? "block" : "none";
+        });
+
+        // ------------------------------
+        // Tab Switching
+        // ------------------------------
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const forms = document.querySelectorAll(".transaction-form");
+        tabButtons.forEach(btn => btn.addEventListener("click", () => {
+            tabButtons.forEach(b => b.classList.remove("active"));
+            forms.forEach(f => f.classList.remove("active"));
+            btn.classList.add("active");
+            document.getElementById(`${btn.dataset.transaction}-form`).classList.add("active");
         }));
 
-    // Show external account input if selected
-    document.getElementById('transfer-to').addEventListener('change', function() {
-        document.getElementById('external-account-group').style.display = this.value === 'external' ? 'block' : 'none';
-    });
-
-    // --- Transaction Handlers ---
-    document.getElementById('deposit-form').addEventListener('submit', function(e){
-        e.preventDefault();
-        const toAcc = document.getElementById('deposit-account').value;
-        const amount = parseFloat(document.getElementById('deposit-amount').value);
-        accounts[toAcc] += amount;
-        saveBalances();
-        updateBalances();
-        addTransaction("Deposit", amount, `Deposit to ${toAcc} account`);
-        alert('✅ Deposit processed successfully!');
-        this.reset();
-    });
-
-    document.getElementById('withdraw-form').addEventListener('submit', function(e){
-        e.preventDefault();
-        const fromAcc = document.getElementById('withdraw-account').value;
-        const amount = parseFloat(document.getElementById('withdraw-amount').value);
-        if(amount > accounts[fromAcc]) { alert("❌ Insufficient funds!"); return; }
-        accounts[fromAcc] -= amount;
-        saveBalances();
-        updateBalances();
-        addTransaction("Withdrawal", amount, `Withdrawal from ${fromAcc} account`);
-        alert('✅ Withdrawal processed successfully!');
-        this.reset();
-    });
-
-    document.getElementById('transfer-form').addEventListener('submit', function(e){
-        e.preventDefault();
-        const fromAcc = document.getElementById('transfer-from').value;
-        const toAccSelect = document.getElementById('transfer-to').value;
-        const toAcc = toAccSelect === 'external' ? null : toAccSelect;
-        const amount = parseFloat(document.getElementById('transfer-amount').value);
-
-        if(amount > accounts[fromAcc]) { alert("❌ Insufficient funds!"); return; }
-        accounts[fromAcc] -= amount;
-        if(toAcc) accounts[toAcc] += amount;
-
-        saveBalances();
-        updateBalances();
-        addTransaction("Transfer", amount, toAcc ? 
-            `Transfer from ${fromAcc} to ${toAcc}` : 
-            `Transfer from ${fromAcc} to external account`);
-
-        alert('✅ Transfer completed successfully!');
-        this.reset();
-    });
-
-    updateBalances();
-</script>
-
-
+        // Initialize page
+        renderBalances();
+    </script>
 </body>
 </html>
