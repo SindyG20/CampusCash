@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Manual - Campus Management System</title>
+<title>Admin Dashboard - Campus Management System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 /* -------- Basic Styles -------- */
@@ -35,21 +35,22 @@ body {
 .content-section.active {display:block;animation:fadeIn 0.5s ease;}
 @keyframes fadeIn {from {opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 h2 {color:#2c3e50;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid #3498db;}
-.card {background:white;border-radius:8px;padding:20px;margin-bottom:20px;box-shadow:0 5px 15px rgba(0,0,0,0.08);}
-.card h3 {color:#3498db;margin-bottom:15px;display:flex;align-items:center;}
-.card h3 i {margin-right:10px;}
-.step {display:flex;margin-bottom:15px;align-items:flex-start;}
-.step-number {background:#3498db;color:white;width:28px;height:28px;border-radius:50%;display:flex;justify-content:center;align-items:center;margin-right:15px;flex-shrink:0;}
-.step-content {flex:1;}
-ul {padding-left:20px;margin:10px 0;}
-li {margin-bottom:8px;}
-.search-box {display:flex;margin-bottom:20px;}
-.search-box input {flex:1;padding:12px 15px;border:1px solid #ddd;border-radius:4px 0 0 4px;font-size:16px;}
-.search-box button {background:#3498db;color:white;border:none;padding:0 20px;border-radius:0 4px 4px 0;cursor:pointer;}
 .stats {display:flex;flex-wrap:wrap;gap:15px;margin-bottom:25px;}
 .stat-box {flex:1;min-width:200px;background:white;padding:20px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,0.08);text-align:center;}
 .stat-box h3 {color:#7f8c8d;font-size:16px;margin-bottom:10px;}
 .stat-box .number {font-size:32px;font-weight:bold;color:#2c3e50;}
+.search-box {display:flex;margin-bottom:20px;}
+.search-box input {flex:1;padding:12px 15px;border:1px solid #ddd;border-radius:4px 0 0 4px;font-size:16px;}
+.search-box button {background:#3498db;color:white;border:none;padding:0 20px;border-radius:0 4px 4px 0;cursor:pointer;}
+.action-btn {background:#27ae60;color:white;padding:8px 15px;margin-bottom:15px;border:none;border-radius:5px;cursor:pointer;transition:0.3s;}
+.action-btn:hover {background:#219150;}
+.table-container {overflow-x:auto;}
+table {width:100%;border-collapse:collapse;margin-bottom:20px;}
+table th, table td {padding:12px;border:1px solid #ddd;text-align:left;}
+table th {background:#3498db;color:white;}
+.action-icons button {background:none;border:none;cursor:pointer;margin:0 5px;font-size:16px;}
+.action-icons .edit {color:#2980b9;}
+.action-icons .delete {color:#c0392b;}
 @media (max-width:900px) {.container{flex-direction:column;height:auto;}.sidebar{width:100%;height:auto;}.menu-items{display:flex;flex-wrap:wrap;justify-content:center;}.menu-item{flex:1;min-width:150px;justify-content:center;border-left:none;border-bottom:4px solid transparent;}.menu-item.active{border-left:none;border-bottom:4px solid #f1c40f;}}
 @media (max-width:600px){.stats{flex-direction:column;}.menu-item{min-width:100%;}}
 </style>
@@ -61,201 +62,101 @@ li {margin-bottom:8px;}
     <div class="sidebar">
         <div class="logo">
             <div class="bank-logo"><img src="logo.png" alt="NWU Bank Logo"></div>
-            <h1>Campus Admin Manual</h1>
+            <h1>Campus Admin</h1>
         </div>
         <div class="menu-items">
-            <div class="menu-item active" data-target="students"><i class="fas fa-user-graduate"></i><span>Managing Students</span></div>
-            <div class="menu-item" data-target="employees"><i class="fas fa-users"></i><span>Maintaining Employees</span></div>
-            <div class="menu-item" data-target="appointments"><i class="fas fa-calendar-check"></i><span>Maintaining Appointments</span></div>
+            <div class="menu-item active" data-target="students"><i class="fas fa-user-graduate"></i><span>Students</span></div>
+            <div class="menu-item" data-target="employees"><i class="fas fa-users"></i><span>Employees</span></div>
+            <div class="menu-item" data-target="appointments"><i class="fas fa-calendar-check"></i><span>Appointments</span></div>
         </div>
     </div>
 
     <!-- Content -->
     <div class="content">
-        <!-- Managing Students -->
+        <!-- Students -->
         <div class="content-section active" id="students">
-            <h2>Managing Students</h2>
+            <h2>Manage Students</h2>
             <div class="stats">
-                <div class="stat-box"><h3>Total Students</h3><div class="number">0</div></div>
-                <div class="stat-box"><h3>New This Month</h3><div class="number">0</div></div>
-                <div class="stat-box"><h3>Pending Actions</h3><div class="number">0</div></div>
+                <div class="stat-box"><h3>Total Students</h3><div class="number">12</div></div>
+                <div class="stat-box"><h3>New This Month</h3><div class="number">3</div></div>
+                <div class="stat-box"><h3>Pending Actions</h3><div class="number">1</div></div>
             </div>
             <div class="search-box">
                 <input type="text" placeholder="Search students by name, ID, or department...">
                 <button><i class="fas fa-search"></i></button>
             </div>
-            <div class="card">
-                <h3><i class="fas fa-list-ol"></i> Steps to Manage Students</h3>
-                <div class="step"><div class="step-number">1</div><div class="step-content"><strong>Access Student Records</strong><p>Navigate to the Students section from the main dashboard.</p></div></div>
-                <div class="step"><div class="step-number">2</div><div class="step-content"><strong>Search or Filter</strong><p>Use the search bar or filters to find specific students.</p></div></div>
-                <div class="step"><div class="step-number">3</div><div class="step-content"><strong>View/Edit Details</strong><p>Click on any student to view full details and edit information.</p></div></div>
-            </div>
-            <div class="card">
-                <h3><i class="fas fa-exclamation-circle"></i> Important Notes</h3>
-                <ul>
-                    <li>Always verify student ID before making changes to records</li>
-                    <li>Maintain confidentiality of student information</li>
-                    <li>Document any changes made to student records</li>
-                    <li>Contact IT support if you encounter system issues</li>
-                </ul>
+            <button class="action-btn"><i class="fas fa-plus"></i> Add Student</button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Department</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>101</td><td>John Doe</td><td>IT</td>
+                            <td class="action-icons">
+                                <button class="edit"><i class="fas fa-edit"></i></button>
+                                <button class="delete"><i class="fas fa-trash"></i></button>
+                            </td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Maintaining Employees -->
+        <!-- Employees -->
         <div class="content-section" id="employees">
-            <h2>Maintaining Employees</h2>
-
+            <h2>Manage Employees</h2>
             <div class="stats">
-                <div class="stat-box">
-                    <h3>Total Employees</h3>
-                    <div class="number">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>New This Month</h3>
-                    <div class="number">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>Pending Actions</h3>
-                    <div class="number">0</div>
-                </div>
+                <div class="stat-box"><h3>Total Employees</h3><div class="number">5</div></div>
+                <div class="stat-box"><h3>New This Month</h3><div class="number">1</div></div>
+                <div class="stat-box"><h3>Pending Actions</h3><div class="number">0</div></div>
             </div>
-
             <div class="search-box">
-                <input type="text" placeholder="Search employees by name, ID, or department...">
+                <input type="text" placeholder="Search employees by name, ID, or role...">
                 <button><i class="fas fa-search"></i></button>
             </div>
-
-            <div class="card">
-                <h3><i class="fas fa-list-ol"></i> Steps to Maintain Employees</h3>
-
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <strong>Access Employee Records</strong>
-                        <p>Navigate to the Employees section from the main dashboard to view all employee details.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <strong>Search or Filter</strong>
-                        <p>Use the search bar or filters to find specific employees by name, ID, role, or department.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <strong>Edit Employee Details</strong>
-                        <p>Click on an employee to update their personal information, role, permissions, or employment status.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <strong>Assign Roles and Permissions</strong>
-                        <p>Ensure each employee has the correct system access based on their responsibilities.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">5</div>
-                    <div class="step-content">
-                        <strong>Review and Save Changes</strong>
-                        <p>Always review all changes before saving. Document updates if necessary for compliance.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-exclamation-circle"></i> Important Notes</h3>
-                <ul>
-                    <li>Verify employee ID before making any updates</li>
-                    <li>Maintain confidentiality of employee information</li>
-                    <li>Document any changes for audit purposes</li>
-                    <li>Contact IT support if any issues arise while maintaining records</li>
-                </ul>
+            <button class="action-btn"><i class="fas fa-plus"></i> Add Employee</button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Role</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>201</td><td>Jane Smith</td><td>Teller</td>
+                            <td class="action-icons">
+                                <button class="edit"><i class="fas fa-edit"></i></button>
+                                <button class="delete"><i class="fas fa-trash"></i></button>
+                            </td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Maintaining Appointments -->
+        <!-- Appointments -->
         <div class="content-section" id="appointments">
-            <h2>Maintaining Appointments</h2>
-
+            <h2>Manage Appointments</h2>
             <div class="stats">
-                <div class="stat-box">
-                    <h3>Total Appointments</h3>
-                    <div class="number">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>New This Month</h3>
-                    <div class="number">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>Pending Actions</h3>
-                    <div class="number">0</div>
-                </div>
+                <div class="stat-box"><h3>Total Appointments</h3><div class="number">8</div></div>
+                <div class="stat-box"><h3>New This Month</h3><div class="number">2</div></div>
+                <div class="stat-box"><h3>Pending Actions</h3><div class="number">1</div></div>
             </div>
-
             <div class="search-box">
                 <input type="text" placeholder="Search appointments by student, staff, or date...">
                 <button><i class="fas fa-search"></i></button>
             </div>
-
-            <div class="card">
-                <h3><i class="fas fa-calendar-alt"></i> Steps to Manage Appointments</h3>
-
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <strong>Access Appointment Records</strong>
-                        <p>Navigate to the Appointments section from the main dashboard to view all scheduled appointments.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <strong>Schedule New Appointments</strong>
-                        <p>Click "Add Appointment" and fill in the details such as student/staff name, date, time, and purpose.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <strong>Edit Existing Appointments</strong>
-                        <p>Select an appointment to change its details, reschedule, or cancel if necessary.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <strong>Confirm Appointment Status</strong>
-                        <p>Ensure appointments are confirmed and updated in the system to avoid overlaps or conflicts.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">5</div>
-                    <div class="step-content">
-                        <strong>Review and Save Changes</strong>
-                        <p>Double-check all updates before saving. Keep a record of any changes for reference.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-exclamation-circle"></i> Important Notes</h3>
-                <ul>
-                    <li>Verify all appointment dates and times before confirming</li>
-                    <li>Ensure no double bookings occur for staff or students</li>
-                    <li>Maintain confidentiality of appointment details</li>
-                    <li>Document any changes or cancellations for records</li>
-                </ul>
+            <button class="action-btn"><i class="fas fa-plus"></i> Add Appointment</button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Student</th><th>Employee</th><th>Date</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>301</td><td>John Doe</td><td>Jane Smith</td><td>2025-09-10</td>
+                            <td class="action-icons">
+                                <button class="edit"><i class="fas fa-edit"></i></button>
+                                <button class="delete"><i class="fas fa-trash"></i></button>
+                            </td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -264,7 +165,6 @@ li {margin-bottom:8px;}
 <script>
 const menuItems = document.querySelectorAll('.menu-item');
 const contentSections = document.querySelectorAll('.content-section');
-
 menuItems.forEach(item => {
     item.addEventListener('click', () => {
         const target = item.getAttribute('data-target');
