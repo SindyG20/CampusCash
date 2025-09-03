@@ -17,41 +17,41 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MyAspMySql
 build_property.RootNamespace = MyAspMySql
-build_property.ProjectDir = C:\Users\shihl\OneDrive - North-West University\CampusCash\MyAspMySql\
+build_property.ProjectDir = C:\Users\admin\OneDrive\Documents\CampusCash\MyAspMySql\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\shihl\OneDrive - North-West University\CampusCash\MyAspMySql
+build_property.MSBuildProjectDirectory = C:\Users\admin\OneDrive\Documents\CampusCash\MyAspMySql
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/shihl/OneDrive - North-West University/CampusCash/MyAspMySql/Pages/Error.cshtml]
+[C:/Users/admin/OneDrive/Documents/CampusCash/MyAspMySql/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/shihl/OneDrive - North-West University/CampusCash/MyAspMySql/Pages/Index.cshtml]
+[C:/Users/admin/OneDrive/Documents/CampusCash/MyAspMySql/Pages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/shihl/OneDrive - North-West University/CampusCash/MyAspMySql/Pages/Privacy.cshtml]
+[C:/Users/admin/OneDrive/Documents/CampusCash/MyAspMySql/Pages/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/shihl/OneDrive - North-West University/CampusCash/MyAspMySql/Pages/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/admin/OneDrive/Documents/CampusCash/MyAspMySql/Pages/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/shihl/OneDrive - North-West University/CampusCash/MyAspMySql/Pages/_ViewImports.cshtml]
+[C:/Users/admin/OneDrive/Documents/CampusCash/MyAspMySql/Pages/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/shihl/OneDrive - North-West University/CampusCash/MyAspMySql/Pages/_ViewStart.cshtml]
+[C:/Users/admin/OneDrive/Documents/CampusCash/MyAspMySql/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/shihl/OneDrive - North-West University/CampusCash/MyAspMySql/Pages/Shared/_Layout.cshtml]
+[C:/Users/admin/OneDrive/Documents/CampusCash/MyAspMySql/Pages/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-7e5ud933wt
