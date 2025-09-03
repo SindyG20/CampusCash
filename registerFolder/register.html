@@ -102,6 +102,7 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
 })
 
         });
+        localStorage.setItem("campusCashUser", JSON.stringify(userData));
 
         if (response.ok) {
             alert("✅ Registration successful!");
@@ -114,6 +115,7 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
     } catch (err) {
         alert("❌ Registration failed: " + err.message);
     }
+   
 });
 </script>
 
