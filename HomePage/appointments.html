@@ -318,91 +318,63 @@
 
     <!-- Scripts -->
     <script>
-    // Load existing appointments from localStorage or initialize empty array
-    let appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+// Get the logged in user
+const currentUser = JSON.parse(localStorage.getItem("campusCashUser"));
+if (!currentUser) {
+    alert("⚠️ Please log in first.");
+    window.location.href = "login.html";
+}
 
-    const appointmentForm = document.getElementById('appointmentForm');
-    const appointmentsTableBody = document.querySelector('#appointmentsTable tbody');
+// Use studentNumber as a unique key
+const storageKey = `appointments_${currentUser.studentNumber}`;
 
-    // Function to render appointments
-    function updateAppointmentsTable() {
-        appointmentsTableBody.innerHTML = '';
-        appointments.forEach(app => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${app.name}</td>
-                <td>${app.studentNumber}</td>
-                <td>${app.date}</td>
-                <td>${app.time}</td>
-                <td>${app.purpose}</td>
-            `;
-            appointmentsTableBody.appendChild(row);
-        });
-    }
+// Load appointments for this user (if any)
+let appointments = JSON.parse(localStorage.getItem(storageKey) || '[]');
 
-    // Initial render on page load
+const appointmentForm = document.getElementById('appointmentForm');
+const appointmentsTableBody = document.querySelector('#appointmentsTable tbody');
+
+// Function to render appointments
+function updateAppointmentsTable() {
+    appointmentsTableBody.innerHTML = '';
+    appointments.forEach(app => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${app.name}</td>
+            <td>${app.studentNumber}</td>
+            <td>${app.date}</td>
+            <td>${app.time}</td>
+            <td>${app.purpose}</td>
+        `;
+        appointmentsTableBody.appendChild(row);
+    });
+}
+
+// Render appointments on page load
+updateAppointmentsTable();
+
+// Save appointment
+appointmentForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const appointment = {
+        name: currentUser.fullName,  // auto-fill from profile
+        studentNumber: currentUser.studentNumber, // auto-fill from profile
+        date: document.getElementById('appointmentDate').value,
+        time: document.getElementById('appointmentTime').value,
+        purpose: document.getElementById('purpose').value
+    };
+
+    appointments.push(appointment);
+    localStorage.setItem(storageKey, JSON.stringify(appointments));
+
     updateAppointmentsTable();
-
-    // Handle appointment booking
-    appointmentForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const appointment = {
-            name: document.getElementById('studentName').value,
-            studentNumber: document.getElementById('studentNumber').value,
-            date: document.getElementById('appointmentDate').value,
-            time: document.getElementById('appointmentTime').value,
-            purpose: document.getElementById('purpose').value
-        };
-
-        // save to localStorage
-        appointments.push(appointment);
-        localStorage.setItem('appointments', JSON.stringify(appointments));
-
-        // Re-render table
-        updateAppointmentsTable();
-
-        appointmentForm.reset();
-        alert('Appointment booked successfully!');
-    });
-
-    // Chatbot Toggle
-    const chatbotToggle = document.getElementById('chatbot-toggle');
-    const chatbotContainer = document.getElementById('chatbot-container');
-    chatbotToggle.addEventListener('click', () => {
-        chatbotContainer.style.display = chatbotContainer.style.display === 'flex' ? 'none' : 'flex';
-    });
-
-    // Chatbot Messaging
-    const chatbotMessages = document.getElementById('chatbot-messages');
-    const chatbotSend = document.getElementById('chatbot-send');
-    const chatbotText = document.getElementById('chatbot-text');
-
-    function addMessage(sender, text) {
-        const msg = document.createElement('div');
-        msg.textContent = `${sender}: ${text}`;
-        chatbotMessages.appendChild(msg);
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-    }
-
-    chatbotSend.addEventListener('click', () => {
-        const text = chatbotText.value.trim();
-        if (!text) return;
-        addMessage('You', text);
-        chatbotText.value = '';
-
-        // Simple bot responses
-        setTimeout(() => {
-            let reply = "I can help with booking or viewing appointments.";
-            if (text.toLowerCase().includes('book')) {
-                reply = "Fill in the form above to book your appointment.";
-            } else if (text.toLowerCase().includes('view')) {
-                reply = "Your booked appointments are listed in the table below.";
-            }
-            addMessage('Bot', reply);
-        }, 500);
-    });
+    appointmentForm.reset();
+    alert('✅ Appointment booked successfully!');
+});
 </script>
+
+
 
 </body>
 </html>

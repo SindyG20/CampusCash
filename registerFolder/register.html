@@ -87,6 +87,7 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
         accountType: document.getElementById("AccountType").value,
         email: document.getElementById("email").value,
         accountNumber: "AC" + Math.floor(1000000000 + Math.random() * 9000000000),
+        savingsAccountNumber: "SA" + Math.floor(1000000000 + Math.random() * 9000000000), // ✅ savings account
         passwordHash: pwd,
         createdAt: new Date().toISOString()
     };
@@ -99,8 +100,18 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
         });
 
         if (response.ok) {
+            // ✅ Save user data to localStorage
+            localStorage.setItem("campusCashUser", JSON.stringify(registrationData));
+
+            // ✅ Initialize accounts (first-time setup for new user)
+            localStorage.setItem("accounts", JSON.stringify({
+                main: 0,     // Main account balance starts at 0
+                savings: 0   // Savings account balance starts at 0
+            }));
+
             alert("✅ Registration successful!");
             document.getElementById("registrationForm").reset();
+
             // Redirect to login page
             window.location.href = "/loginFolder/login.html";
         } else {
@@ -110,9 +121,9 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
     } catch (err) {
         alert("❌ Registration failed: " + err.message);
     }
-
 });
 </script>
+
 
 
 

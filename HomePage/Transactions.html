@@ -161,6 +161,24 @@
         // ------------------------------
         // Load user data from localStorage
         // ------------------------------
+// Save transaction to history
+// ------------------------------
+// ------------------------------
+// Save transaction to history
+// ------------------------------
+function recordTransaction(type, amount, fromAcc, toAcc, balanceAfter) {
+    let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+    transactions.push({
+        date: new Date().toISOString(),
+        type: type,
+        amount: amount,
+        from: fromAcc,
+        to: toAcc,
+        balanceAfter: balanceAfter
+    });
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
         let user = JSON.parse(localStorage.getItem("campusCashUser"));
         if (!user) {
             alert("⚠️ Please log in first.");
@@ -181,47 +199,53 @@
         }
 
         function renderBalances() {
-            document.getElementById("main-account-number").textContent = user.accountNumber || "N/A";
-            document.getElementById("main-balance").textContent = `R${accounts.main.toFixed(2)}`;
-            document.getElementById("savings-balance").textContent = `R${accounts.savings.toFixed(2)}`;
-        }
+    document.getElementById("main-account-number").textContent = user.accountNumber || "N/A";
+    document.getElementById("main-balance").textContent = `R${accounts.main.toFixed(2)}`;
+    document.getElementById("savings-account-number").textContent = user.savingsAccountNumber || "N/A";
+    document.getElementById("savings-balance").textContent = `R${accounts.savings.toFixed(2)}`;
+}
+
 
         // ------------------------------
         // Transaction functions
         // ------------------------------
         function deposit(toAcc, amount) {
-            accounts[toAcc] += amount;
-            saveAccounts();
-            renderBalances();
-            alert(`✅ Deposit of R${amount.toFixed(2)} to ${toAcc} successful!`);
-        }
+    accounts[toAcc] += amount;
+    saveAccounts();
+    renderBalances();
+    recordTransaction("Deposit", amount, "-", toAcc, accounts[toAcc]); // ✅ NEW
+    alert(`✅ Deposit of R${amount.toFixed(2)} to ${toAcc} successful!`);
+}
 
-        function withdraw(fromAcc, amount) {
-            if (amount > accounts[fromAcc]) {
-                alert("❌ Insufficient funds!");
-                return false;
-            }
-            accounts[fromAcc] -= amount;
-            saveAccounts();
-            renderBalances();
-            alert(`✅ Withdrawal of R${amount.toFixed(2)} from ${fromAcc} successful!`);
-            return true;
-        }
+function withdraw(fromAcc, amount) {
+    if (amount > accounts[fromAcc]) {
+        alert("❌ Insufficient funds!");
+        return false;
+    }
+    accounts[fromAcc] -= amount;
+    saveAccounts();
+    renderBalances();
+    recordTransaction("Withdrawal", amount, fromAcc, "-", accounts[fromAcc]); // ✅ NEW
+    alert(`✅ Withdrawal of R${amount.toFixed(2)} from ${fromAcc} successful!`);
+    return true;
+}
 
-        function transfer(fromAcc, toAcc, amount) {
-            if (amount > accounts[fromAcc]) {
-                alert("❌ Insufficient funds!");
-                return false;
-            }
-            accounts[fromAcc] -= amount;
-            if (toAcc !== "external") {
-                accounts[toAcc] += amount;
-            }
-            saveAccounts();
-            renderBalances();
-            alert(`✅ Transfer of R${amount.toFixed(2)} from ${fromAcc} to ${toAcc} successful!`);
-            return true;
-        }
+function transfer(fromAcc, toAcc, amount) {
+    if (amount > accounts[fromAcc]) {
+        alert("❌ Insufficient funds!");
+        return false;
+    }
+    accounts[fromAcc] -= amount;
+    if (toAcc !== "external") {
+        accounts[toAcc] += amount;
+    }
+    saveAccounts();
+    renderBalances();
+    recordTransaction("Transfer", amount, fromAcc, toAcc, accounts[fromAcc]); // ✅ NEW
+    alert(`✅ Transfer of R${amount.toFixed(2)} from ${fromAcc} to ${toAcc} successful!`);
+    return true;
+}
+
 
         // ------------------------------
         // Event Listeners
