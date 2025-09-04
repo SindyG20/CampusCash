@@ -35,6 +35,7 @@ public IActionResult Register([FromBody] User userDto)
         PasswordHash = userDto.PasswordHash, // ⚠ hash in real apps
         Role = "Student",
         CreatedAt = DateTime.Now
+        
     };
 
     _context.Users.Add(user);
