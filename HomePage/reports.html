@@ -78,51 +78,48 @@
     // Redirect if no user is logged in
     const currentUser = JSON.parse(localStorage.getItem("campusCashUser"));
     if (!currentUser) {
-      alert("Please log in first.");
-      window.location.href = "login.html";
+        alert("Please log in first.");
+        window.location.href = "login.html";
     }
 
-    // Use the SAME transactions key as transactions.html
-    const transactions = JSON.parse(localStorage.getItem("transactions") || "[]");
+    // Load transactions
+    const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
-    function renderTransactions() {
-      const tbody = document.querySelector("#transactionTable tbody");
-      tbody.innerHTML = "";
+    function renderTransactions(filteredTransactions = transactions) {
+        const tbody = document.querySelector("#transactionTable tbody");
+        tbody.innerHTML = "";
 
-      // Render newest transactions first
-      transactions.slice().reverse().forEach(tx => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${tx.date}</td>
-          <td>R${parseFloat(tx.amount).toFixed(2)}</td>
-          <td>${tx.from || "-"}</td>
-          <td>${tx.to || "-"}</td>
-          <td>${tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</td>
-        `;
-        tbody.appendChild(row);
-      });
+        // Render newest transactions first
+        filteredTransactions.slice().reverse().forEach(tx => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${tx.date}</td>
+                <td>R${parseFloat(tx.amount).toFixed(2)}</td>
+                <td>${tx.from || "-"}</td>
+                <td>${tx.to || "-"}</td>
+                <td>${tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</td>
+            `;
+            tbody.appendChild(row);
+        });
     }
 
     function filterTable() {
-      const date = document.getElementById("filter-date").value;
-      const type = document.getElementById("filter-type").value;
+        const date = document.getElementById("filter-date").value;
+        const type = document.getElementById("filter-type").value.toLowerCase();
 
-      const rows = document.querySelectorAll("#transactionTable tbody tr");
-      rows.forEach(row => {
-        const rowDate = row.cells[0].textContent;
-        const rowType = row.cells[4].textContent.toLowerCase();
+        const filtered = transactions.filter(tx => {
+            let show = true;
+            if (date && tx.date !== date) show = false;
+            if (type && tx.type !== type) show = false;
+            return show;
+        });
 
-        let show = true;
-        if (date && !rowDate.includes(date)) show = false;
-        if (type && rowType !== type) show = false;
-
-        row.style.display = show ? "" : "none";
-      });
+        renderTransactions(filtered);
     }
 
     // Render transactions on page load
     renderTransactions();
-  </script>
+</script>
 
 </body>
 </html>

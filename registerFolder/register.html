@@ -77,27 +77,29 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
         return;
     }
 
+    // Create user data object from form inputs
+    const userData = {
+        studentId: document.getElementById("StudentID").value,
+        studentNumber: document.getElementById("StudentNumber").value,
+        fullName: document.getElementById("FullName").value,
+        dateOfBirth: document.getElementById("DOB").value,
+        address: document.getElementById("Address").value,
+        accountType: document.getElementById("AccountType").value,
+        email: document.getElementById("email").value,
+        passwordHash: pwd,
+        createdAt: new Date().toISOString()
+    };
+
     try {
         const response = await fetch("http://localhost:5264/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                studentId: document.getElementById("StudentID").value,
-                studentNumber: document.getElementById("StudentNumber").value,
-                fullName: document.getElementById("FullName").value,
-                dateOfBirth: document.getElementById("DOB").value,
-                address: document.getElementById("Address").value,
-                accountType: document.getElementById("AccountType").value,
-                email: document.getElementById("email").value,
-                passwordHash: pwd,
-
-                // ✅ Step 1: Add account creation date
-                createdAt: new Date().toISOString()
-            })
+            body: JSON.stringify(userData)
         });
-        localStorage.setItem("campusCashUser", JSON.stringify(userData));
 
         if (response.ok) {
+            // Store user data in localStorage after successful registration
+            localStorage.setItem("campusCashUser", JSON.stringify(userData));
             alert("✅ Registration successful!");
             document.getElementById("registrationForm").reset();
             window.location.href = "/loginFolder/login.html";
@@ -108,8 +110,8 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
     } catch (err) {
         alert("❌ Registration failed: " + err.message);
     }
-   
 });
+
 </script>
 
 
