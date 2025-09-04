@@ -1,7 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using MyAspMySql.Data;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers();
+
+// 🔹 Add CORS service
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()  // allow requests from any origin
+              .AllowAnyMethod()  // allow GET, POST, PUT, DELETE
+              .AllowAnyHeader(); // allow headers like Content-Type
+    });
+});
+
+// Other services like Swagger, DB, etc.
+
 
 // Add services to the container
 builder.Services.AddControllersWithViews();

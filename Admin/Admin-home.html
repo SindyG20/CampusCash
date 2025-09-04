@@ -152,7 +152,7 @@ menuItems.forEach(item => {
     });
 });
 
-const apiBaseUrl = "https://localhost:5001/api/students"; // 🔹 Your API
+const apiBaseUrl = "http://localhost:5264/api/students"; // 🔹 Your API
 
 async function loadStudents() {
     try {
@@ -213,7 +213,7 @@ document.getElementById("addStudentBtn").addEventListener("click", async () => {
         await fetch(apiBaseUrl, {
             method: "POST",
             headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({ studentNumber, name, email, password })
+            body: JSON.stringify({ studentNumber, fullname, email, password })
         });
 
         // Show temporary success message in table
