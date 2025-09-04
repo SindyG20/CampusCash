@@ -360,13 +360,16 @@ async function loadUserData() {
     try {
         const response = await fetch(`http://localhost:5264/api/accounts/${user.studentNumber}`);
         if (response.ok) {
-            const fresh = await response.json();
-            user = { ...user, ...fresh }; // merge any fresh data
-            localStorage.setItem(storageKey, JSON.stringify(user));
-            console.log("✅ Refreshed account data from backend:", fresh);
-        } else {
-            console.warn("⚠️ Account fetch returned status:", response.status);
+    const fresh = await response.json();
+    // Only merge fields that exist in the API response
+    for (let key in fresh) {
+        if (fresh[key] !== undefined && fresh[key] !== null) {
+            user[key] = fresh[key];
         }
+    }
+    localStorage.setItem(storageKey, JSON.stringify(user));
+}
+
     } catch (err) {
         console.warn("⚠️ Could not fetch account data (network/CORS?). Using stored data. Error:", err);
     }
