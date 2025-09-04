@@ -102,10 +102,12 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
             localStorage.setItem("campusCashUser", JSON.stringify(userData));
             alert("✅ Registration successful!");
             document.getElementById("registrationForm").reset();
+
+            // Redirect to login page
             window.location.href = "/loginFolder/login.html";
         } else {
             const errMsg = await response.json();
-            alert("❌ Registration failed: " + errMsg.message);
+            alert("❌ Registration failed: " + (errMsg.message || "Unknown error"));
         }
     } catch (err) {
         alert("❌ Registration failed: " + err.message);
@@ -113,6 +115,8 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
 });
 
 </script>
+
+
 
 
 </body>

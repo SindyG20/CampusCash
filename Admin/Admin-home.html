@@ -3,22 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Manual - Campus Management System</title>
+<title>Admin Dashboard - Campus Management System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 /* -------- Basic Styles -------- */
 * {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
-body {
-    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-    color: #333;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
-}
+body {background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);background-size: 400% 400%;animation: gradientBG 15s ease infinite;color: #333;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;}
 @keyframes gradientBG {0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 .container {display:flex;width:90%;max-width:1200px;height:85vh;background:rgba(255,255,255,0.95);border-radius:15px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,0.4);}
 .sidebar {width:280px;background:#2c3e50;color:white;padding:25px 0;overflow-y:auto;}
@@ -35,21 +25,22 @@ body {
 .content-section.active {display:block;animation:fadeIn 0.5s ease;}
 @keyframes fadeIn {from {opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 h2 {color:#2c3e50;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid #3498db;}
-.card {background:white;border-radius:8px;padding:20px;margin-bottom:20px;box-shadow:0 5px 15px rgba(0,0,0,0.08);}
-.card h3 {color:#3498db;margin-bottom:15px;display:flex;align-items:center;}
-.card h3 i {margin-right:10px;}
-.step {display:flex;margin-bottom:15px;align-items:flex-start;}
-.step-number {background:#3498db;color:white;width:28px;height:28px;border-radius:50%;display:flex;justify-content:center;align-items:center;margin-right:15px;flex-shrink:0;}
-.step-content {flex:1;}
-ul {padding-left:20px;margin:10px 0;}
-li {margin-bottom:8px;}
-.search-box {display:flex;margin-bottom:20px;}
-.search-box input {flex:1;padding:12px 15px;border:1px solid #ddd;border-radius:4px 0 0 4px;font-size:16px;}
-.search-box button {background:#3498db;color:white;border:none;padding:0 20px;border-radius:0 4px 4px 0;cursor:pointer;}
 .stats {display:flex;flex-wrap:wrap;gap:15px;margin-bottom:25px;}
 .stat-box {flex:1;min-width:200px;background:white;padding:20px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,0.08);text-align:center;}
 .stat-box h3 {color:#7f8c8d;font-size:16px;margin-bottom:10px;}
 .stat-box .number {font-size:32px;font-weight:bold;color:#2c3e50;}
+.search-box {display:flex;margin-bottom:20px;}
+.search-box input {flex:1;padding:12px 15px;border:1px solid #ddd;border-radius:4px 0 0 4px;font-size:16px;}
+.search-box button {background:#3498db;color:white;border:none;padding:0 20px;border-radius:0 4px 4px 0;cursor:pointer;}
+.action-btn {background:#27ae60;color:white;padding:8px 15px;margin-bottom:15px;border:none;border-radius:5px;cursor:pointer;transition:0.3s;}
+.action-btn:hover {background:#219150;}
+.table-container {overflow-x:auto;}
+table {width:100%;border-collapse:collapse;margin-bottom:20px;}
+table th, table td {padding:12px;border:1px solid #ddd;text-align:left;}
+table th {background:#3498db;color:white;}
+.action-icons button {background:none;border:none;cursor:pointer;margin:0 5px;font-size:16px;}
+.action-icons .edit {color:#2980b9;}
+.action-icons .delete {color:#c0392b;}
 @media (max-width:900px) {.container{flex-direction:column;height:auto;}.sidebar{width:100%;height:auto;}.menu-items{display:flex;flex-wrap:wrap;justify-content:center;}.menu-item{flex:1;min-width:150px;justify-content:center;border-left:none;border-bottom:4px solid transparent;}.menu-item.active{border-left:none;border-bottom:4px solid #f1c40f;}}
 @media (max-width:600px){.stats{flex-direction:column;}.menu-item{min-width:100%;}}
 </style>
@@ -61,7 +52,7 @@ li {margin-bottom:8px;}
     <div class="sidebar">
         <div class="logo">
             <div class="bank-logo"><img src="logo.png" alt="NWU Bank Logo"></div>
-            <h1>Campus Admin Manual</h1>
+            <h1>Campus Admin</h1>
         </div>
         <div class="menu-items">
             <div class="menu-item active" data-target="students"><i class="fas fa-user-graduate"></i><span>Managing Students</span></div>
@@ -72,199 +63,85 @@ li {margin-bottom:8px;}
 
     <!-- Content -->
     <div class="content">
-        <!-- Managing Students -->
+        <!-- Students -->
         <div class="content-section active" id="students">
-            <h2>Managing Students</h2>
+            <h2>Manage Students</h2>
             <div class="stats">
-                <div class="stat-box"><h3>Total Students</h3><div class="number">0</div></div>
+                <div class="stat-box"><h3>Total Students</h3><div class="number" id="totalStudents">0</div></div>
+                <div class="stat-box"><h3>New This Month</h3><div class="number" id="newThisMonth">0</div></div>
+                <div class="stat-box"><h3>Pending Actions</h3><div class="number" id="pendingStudents">0</div></div>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchStudent" placeholder="Search by name or student number...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <button class="action-btn" id="addStudentBtn"><i class="fas fa-plus"></i> Add Student</button>
+            <div class="table-container">
+                <table id="studentsTable">
+                    <thead>
+                        <tr><th>Student Number</th><th>Name</th><th>Email</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic student rows will load here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Employees -->
+        <div class="content-section" id="employees">
+            <h2>Manage Employees</h2>
+            <div class="stats">
+                <div class="stat-box"><h3>Total Employees</h3><div class="number">0</div></div>
                 <div class="stat-box"><h3>New This Month</h3><div class="number">0</div></div>
                 <div class="stat-box"><h3>Pending Actions</h3><div class="number">0</div></div>
             </div>
             <div class="search-box">
-                <input type="text" placeholder="Search students by name, ID, or department...">
+                <input type="text" placeholder="Search employees by name, ID, or role...">
                 <button><i class="fas fa-search"></i></button>
             </div>
-            <div class="card">
-                <h3><i class="fas fa-list-ol"></i> Steps to Manage Students</h3>
-                <div class="step"><div class="step-number">1</div><div class="step-content"><strong>Access Student Records</strong><p>Navigate to the Students section from the main dashboard.</p></div></div>
-                <div class="step"><div class="step-number">2</div><div class="step-content"><strong>Search or Filter</strong><p>Use the search bar or filters to find specific students.</p></div></div>
-                <div class="step"><div class="step-number">3</div><div class="step-content"><strong>View/Edit Details</strong><p>Click on any student to view full details and edit information.</p></div></div>
-            </div>
-            <div class="card">
-                <h3><i class="fas fa-exclamation-circle"></i> Important Notes</h3>
-                <ul>
-                    <li>Always verify student ID before making changes to records</li>
-                    <li>Maintain confidentiality of student information</li>
-                    <li>Document any changes made to student records</li>
-                    <li>Contact IT support if you encounter system issues</li>
-                </ul>
+            <button class="action-btn"><i class="fas fa-plus"></i> Add Employee</button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Role</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Maintaining Employees -->
-        <div class="content-section" id="employees">
-            <h2>Maintaining Employees</h2>
-
-            <div class="stats">
-                <div class="stat-box">
-                    <h3>Total Employees</h3>
-                    <div class="number">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>New This Month</h3>
-                    <div class="number">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>Pending Actions</h3>
-                    <div class="number">0</div>
-                </div>
-            </div>
-
-            <div class="search-box">
-                <input type="text" placeholder="Search employees by name, ID, or department...">
-                <button><i class="fas fa-search"></i></button>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-list-ol"></i> Steps to Maintain Employees</h3>
-
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <strong>Access Employee Records</strong>
-                        <p>Navigate to the Employees section from the main dashboard to view all employee details.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <strong>Search or Filter</strong>
-                        <p>Use the search bar or filters to find specific employees by name, ID, role, or department.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <strong>Edit Employee Details</strong>
-                        <p>Click on an employee to update their personal information, role, permissions, or employment status.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <strong>Assign Roles and Permissions</strong>
-                        <p>Ensure each employee has the correct system access based on their responsibilities.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">5</div>
-                    <div class="step-content">
-                        <strong>Review and Save Changes</strong>
-                        <p>Always review all changes before saving. Document updates if necessary for compliance.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-exclamation-circle"></i> Important Notes</h3>
-                <ul>
-                    <li>Verify employee ID before making any updates</li>
-                    <li>Maintain confidentiality of employee information</li>
-                    <li>Document any changes for audit purposes</li>
-                    <li>Contact IT support if any issues arise while maintaining records</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Maintaining Appointments -->
+        <!-- Appointments -->
         <div class="content-section" id="appointments">
-            <h2>Maintaining Appointments</h2>
-
+            <h2>Manage Appointments</h2>
             <div class="stats">
-                <div class="stat-box">
-                    <h3>Total Appointments</h3>
-                    <div class="number">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>New This Month</h3>
-                    <div class="number">0</div>
-                </div>
-                <div class="stat-box">
-                    <h3>Pending Actions</h3>
-                    <div class="number">0</div>
-                </div>
+                <div class="stat-box"><h3>Total Appointments</h3><div class="number">0</div></div>
+                <div class="stat-box"><h3>New This Month</h3><div class="number" id="apptNewThisMonth">0</div></div>
+                <div class="stat-box"><h3>Pending Actions</h3><div class="number" id="apptPending">0</div></div>
             </div>
-
             <div class="search-box">
                 <input type="text" placeholder="Search appointments by student, staff, or date...">
                 <button><i class="fas fa-search"></i></button>
             </div>
-
-            <div class="card">
-                <h3><i class="fas fa-calendar-alt"></i> Steps to Manage Appointments</h3>
-
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <strong>Access Appointment Records</strong>
-                        <p>Navigate to the Appointments section from the main dashboard to view all scheduled appointments.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <strong>Schedule New Appointments</strong>
-                        <p>Click "Add Appointment" and fill in the details such as student/staff name, date, time, and purpose.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <strong>Edit Existing Appointments</strong>
-                        <p>Select an appointment to change its details, reschedule, or cancel if necessary.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <strong>Confirm Appointment Status</strong>
-                        <p>Ensure appointments are confirmed and updated in the system to avoid overlaps or conflicts.</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">5</div>
-                    <div class="step-content">
-                        <strong>Review and Save Changes</strong>
-                        <p>Double-check all updates before saving. Keep a record of any changes for reference.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-exclamation-circle"></i> Important Notes</h3>
-                <ul>
-                    <li>Verify all appointment dates and times before confirming</li>
-                    <li>Ensure no double bookings occur for staff or students</li>
-                    <li>Maintain confidentiality of appointment details</li>
-                    <li>Document any changes or cancellations for records</li>
-                </ul>
+            <button class="action-btn"><i class="fas fa-plus"></i> Add Appointment</button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Student</th><th>Employee</th><th>Date</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
+
 <script>
 const menuItems = document.querySelectorAll('.menu-item');
 const contentSections = document.querySelectorAll('.content-section');
 
+// Sidebar menu toggle
 menuItems.forEach(item => {
     item.addEventListener('click', () => {
         const target = item.getAttribute('data-target');
@@ -274,6 +151,127 @@ menuItems.forEach(item => {
         document.getElementById(target).classList.add('active');
     });
 });
+
+const apiBaseUrl = "http://localhost:5264/api/students"; // 🔹 Your API
+
+async function loadStudents() {
+    try {
+        const response = await fetch(apiBaseUrl);
+        const students = await response.json();
+
+        const tbody = document.querySelector("#studentsTable tbody");
+        tbody.innerHTML = "";
+
+        // Populate student table
+        students.forEach(student => {
+            let row = `
+                <tr>
+                    <td>${student.studentNumber}</td>
+                    <td>${student.fullname}</td>  <!-- corrected field -->
+                    <td>${student.email}</td>
+                    <td class="action-icons">
+                        <button class="edit" onclick="editStudent('${student.studentNumber}')"><i class="fas fa-edit"></i></button>
+                        <button class="delete" onclick="deleteStudent('${student.studentNumber}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+        // Stats calculation
+        const now = new Date();
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
+
+        const newThisMonth = students.filter(s => {
+            const created = new Date(s.createdAt);
+            return created.getMonth() === thisMonth && created.getFullYear() === thisYear;
+        }).length;
+
+        const pending = students.filter(s => s.status?.toLowerCase() === "pending").length;
+
+        document.getElementById("totalStudents").innerText = students.length;
+        document.getElementById("newThisMonth").innerText = newThisMonth;
+        document.getElementById("pendingStudents").innerText = pending;
+
+    } catch (error) {
+        console.error("Error loading students:", error);
+    }
+}
+
+// Add Student
+// Add Student
+document.getElementById("addStudentBtn").addEventListener("click", async () => {
+    const studentNumber = prompt("Enter Student Number:");
+    const fullname = prompt("Enter Name:");
+    const email = prompt("Enter Email:");
+    const password = prompt("Enter Password:");
+
+    if(!studentNumber || !fullname || !email || !password) return alert("All fields are required!");
+
+    try {
+        await fetch(apiBaseUrl, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ studentNumber, fullname, email, password })
+        });
+
+        // Show temporary success message in table
+        const tbody = document.querySelector("#studentsTable tbody");
+        const msgRow = document.createElement("tr");
+        msgRow.innerHTML = `<td colspan="4" style="background:#27ae60;color:white;text-align:center;">Student successfully added!</td>`;
+        tbody.prepend(msgRow);
+
+        // Remove message after 3 seconds and reload students
+        setTimeout(() => msgRow.remove(), 3000);
+
+        // Reload table immediately
+        await loadStudents();
+
+    } catch (error) {
+        console.error("Error adding student:", error);
+        alert("Failed to add student. Check console for details.");
+    }
+});
+
+
+// Delete a student
+async function deleteStudent(studentNumber) {
+    if(!confirm("Are you sure you want to delete this student?")) return;
+    try {
+        await fetch(`${apiBaseUrl}/${studentNumber}`, { method:"DELETE" });
+        loadStudents();
+    } catch(e) { console.error(e); }
+}
+
+// Edit student
+async function editStudent(studentNumber) {
+    const newName = prompt("Enter new name:");
+    const newEmail = prompt("Enter new email:");
+    if(!newName || !newEmail) return;
+    try {
+        await fetch(`${apiBaseUrl}/${studentNumber}`, {
+            method:"PUT",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({ name:newName, email:newEmail })
+        });
+        loadStudents();
+    } catch(e) { console.error(e); }
+}
+
+// Search functionality (by Name or Student Number)
+document.getElementById("searchStudent").addEventListener("input", (e) => {
+    const filter = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll("#studentsTable tbody tr");
+    rows.forEach(row => {
+        const name = row.cells[1].innerText.toLowerCase();
+        const number = row.cells[0].innerText.toLowerCase();
+        row.style.display = (name.includes(filter) || number.includes(filter)) ? "" : "none";
+    });
+});
+
+// Load students on page load
+window.onload = loadStudents;
 </script>
 
 </body>

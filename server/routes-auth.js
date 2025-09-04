@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      'SELECT * FROM users WHERE StudentNumber = ?',
+      'SELECT * FROM users WHERE StudentNumber = ? ',
       [StudentNumber]
     );
 

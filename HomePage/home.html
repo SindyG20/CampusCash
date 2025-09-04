@@ -239,7 +239,7 @@
             <li><a href="profile.html">Profile</a></li>
             <li><a href="reports.html">Reports</a></li>
             <li><a href="block-card.html" class="btn">Block Card</a></li>
-            <li><a href="Replace-card.html" class="btn">Replace Card</a></li>
+
 
         </ul>
     </nav>
@@ -284,7 +284,6 @@
         <div class="footer-section">
             <h4>Quick Links</h4>
             <a href="home.html">Home</a>
-            <a href="accountInfo.html">Account</a>
             <a href="Transactions.html">Transactions</a>
         </div>
         <div class="footer-section">
@@ -361,13 +360,16 @@ async function loadUserData() {
     try {
         const response = await fetch(`http://localhost:5264/api/accounts/${user.studentNumber}`);
         if (response.ok) {
-            const fresh = await response.json();
-            user = { ...user, ...fresh }; // merge any fresh data
-            localStorage.setItem(storageKey, JSON.stringify(user));
-            console.log("✅ Refreshed account data from backend:", fresh);
-        } else {
-            console.warn("⚠️ Account fetch returned status:", response.status);
+    const fresh = await response.json();
+    // Only merge fields that exist in the API response
+    for (let key in fresh) {
+        if (fresh[key] !== undefined && fresh[key] !== null) {
+            user[key] = fresh[key];
         }
+    }
+    localStorage.setItem(storageKey, JSON.stringify(user));
+}
+
     } catch (err) {
         console.warn("⚠️ Could not fetch account data (network/CORS?). Using stored data. Error:", err);
     }

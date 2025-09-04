@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Block Card - Campus Cash Bank</title>
   <link rel="stylesheet" href="block-card.css">
+  <style>
+    .success-message {
+      display: none;
+      margin-top: 15px;
+      padding: 10px;
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -12,7 +23,7 @@
   </header>
 
   <div class="container">
-    <form>
+    <form id="blockForm">
       <label for="student-id">Student ID:</label>
       <input type="text" id="student-id" required>
 
@@ -22,6 +33,32 @@
       <button type="submit">Block Card</button>
       <button type="button" class="btn btn-secondary" onclick="window.location.href='../HomePage/home.html'">Cancel</button>
     </form>
+
+    <div class="success-message" id="successMessage">
+      ✅ Card successfully blocked!
+    </div>
   </div>
+
+  <script>
+    document.getElementById("blockForm").addEventListener("submit", function(e) {
+      e.preventDefault(); // prevent page refresh
+
+      const studentId = document.getElementById("student-id").value.trim();
+      const reason = document.getElementById("reason").value.trim();
+
+      if (studentId === "" || reason === "") {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      // Simulate backend call (you’ll connect API later)
+      setTimeout(() => {
+        document.getElementById("successMessage").style.display = "block";
+
+        // clear form fields
+        document.getElementById("blockForm").reset();
+      }, 500);
+    });
+  </script>
 </body>
 </html>

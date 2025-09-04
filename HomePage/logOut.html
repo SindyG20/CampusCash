@@ -116,8 +116,9 @@
 
     function doLogout(){
       sessionStorage.clear();
-      localStorage.clear();
-      window.location.href = 'index.html';
+      localStorage.removeItem('campusCashUser'); // only remove login session
+
+      window.location.href = '/indexFolder/index.html';
     }
 
     confirmBtn.addEventListener('click', () => {
