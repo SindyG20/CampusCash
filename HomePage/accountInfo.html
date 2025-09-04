@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Cash Bank - Account Info</title>
+<link rel="stylesheet" href="home.css"> <!-- Reuse your home.css -->
+<style>
+    /* Page-specific styles */
+    .info-section {
+        background: white;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .info-section h2 {
+        margin-top: 0;
+        color: #4b0082;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .info-item {
+        background: #f8f8ff;
+        border-radius: 8px;
+        padding: 15px;
+        border-left: 5px solid #4b0082;
+    }
+    .info-item h4 {
+        margin: 0 0 8px;
+        color: #3a006e;
+    }
+    .info-item p {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+    .actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .actions button {
+        flex: 1;
+        padding: 10px;
+        background-color: #4b0082;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .actions button:hover {
+        background-color: #3a006e;
+    }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="logo"> 
+        <img src="BankLogo.png" alt="NWU Logo" class="logo">
+        Campus Cash Bank ™
+    </div>
+    <nav class="top-nav">
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="accountInfo.html" class="active">Account Info</a></li>
+            <li><a href="transactions.html">Transactions</a></li>
+            <li><a href="appointments.html">Appointments</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="reports.html">Reports</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="content">
+    <!-- Personal Information -->
+    <section class="info-section">
+        <h2>Personal Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <h4>Full Name</h4>
+                <p id="fullName">Loading...</p>
+            </div>
+            <div class="info-item">
+                <h4>Student ID</h4>
+                <p id="studentId">Loading...</p>
+            </div>
+            <div class="info-item">
+                <h4>Email</h4>
+                <p id="email">Loading...</p>
+            </div>
+            <div class="info-item">
+                <h4>Date of Birth</h4>
+                <p id="dob">Loading...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Account Information -->
+    <section class="info-section">
+        <h2>Account Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <h4>Account Number</h4>
+                <p id="accountNum">Loading...</p>
+            </div>
+            <div class="info-item">
+                <h4>Account Type</h4>
+                <p id="accountType">Loading...</p>
+            </div>
+            <div class="info-item">
+                <h4>Balance</h4>
+                <p id="balance">Loading...</p>
+            </div>
+        </div>
+        <div class="actions">
+            <button onclick="location.href='transactions.html'">View Transactions</button>
+            <button onclick="location.href='reports.html'">View Reports</button>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <a href="home.html">Home</a>
+            <a href="accountInfo.html">Account</a>
+            <a href="transactions.html">Transactions</a>
+        </div>
+        <div class="footer-section">
+            <h4>Contact Us</h4>
+            <p>Email: support@campuscashbank.co.za</p>
+            <p>Phone: +27 12 413 7159</p>
+            <p>Location: NWU Vanderbijlpark, SA</p>
+        </div>
+        <div class="footer-section newsletter">
+            <h4>Subscribe</h4>
+            <p>Stay updated with the latest features and offers.</p>
+            <input type="email" placeholder="Enter your email">
+            <button>Subscribe</button>
+        </div>
+    </div>
+    <div style="text-align:center; margin-top: 20px;">
+        &copy; 2025 Campus Cash Bank. Proudly Sponsored by NWU. All Rights Reserved.
+    </div>
+</footer>
+<script>
+const API_BASE = "http://localhost:5190"; 
+
+// Simulated fetch of user info
+async function loadAccountInfo() {
+    try {
+        const response = await fetch(`${API_BASE}/api/auth/user`, { // adjust endpoint if needed
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                // "Authorization": "Bearer " + localStorage.getItem("token")  <-- if using JWT
+            }
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch user info");
+        const user = await response.json();
+
+        document.getElementById("fullName").innerText = user.fullName;
+        document.getElementById("studentId").innerText = user.studentId;
+        document.getElementById("email").innerText = user.email;
+        document.getElementById("dob").innerText = user.dateOfBirth?.split("T")[0];
+        document.getElementById("accountNum").innerText = user.accountNumber || "12345678";
+        document.getElementById("accountType").innerText = user.accountType;
+        document.getElementById("balance").innerText = "R " + (user.balance ?? "0.00");
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+</script>
+
+</body>
+</html>

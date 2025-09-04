@@ -16,7 +16,7 @@
                 <li><a href="appointments.html">Appointments</a></li>
                 <li><a href="profile.html">Profile</a></li>
                 <li><a href="reports.html">Reports</a></li> 
-                <li><a href="block-card.html">Block Card</a></li> 
+                <li><a href="report-lost.html">Report Lost/Stolen</a></li> 
             </ul>
         </nav>
     </header>
@@ -32,7 +32,7 @@
             
             <div class="account-card secondary">
                 <h3>Savings Account</h3>
-                <p class="account-number" id="savings-account-number"></CCB-6978-5542></p>
+                <p class="account-number" id="savings-account-number">CCB-6978-5542</p>
                 <p class="account-balance" id="savings-balance">R0.00</p>
             </div>
         </section>
@@ -143,7 +143,7 @@
                 <a href="#">Account</a>
                 <a href="transactions.html">Transactions</a>
                 <a href="reports.html">Reports</a> 
-                <a href="block-card.html">Block Card</a> 
+                <a href="report-lost.html">Report Lost/Stolen</a> 
             </div>
             <div class="footer-section">
                 <h4>Contact Us</h4>
@@ -161,91 +161,76 @@
         // ------------------------------
         // Load user data from localStorage
         // ------------------------------
-// Save transaction to history
-// ------------------------------
-// ------------------------------
-// Save transaction to history
-// ------------------------------
-function recordTransaction(type, amount, fromAcc, toAcc, balanceAfter) {
-    let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
-    transactions.push({
-        date: new Date().toISOString(),
-        type: type,
-        amount: amount,
-        from: fromAcc,
-        to: toAcc,
-        balanceAfter: balanceAfter
-    });
-    localStorage.setItem("transactions", JSON.stringify(transactions));
-}
-
         let user = JSON.parse(localStorage.getItem("campusCashUser"));
         if (!user) {
             alert("⚠️ Please log in first.");
             window.location.href = "login.html";
         }
 
-        // Initialize accounts (main balance comes from user)
+        // Initialize accounts and transactions
         let accounts = JSON.parse(localStorage.getItem("accounts")) || {
             main: user.balance || 0,
             savings: 0
         };
+        let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
         function saveAccounts() {
             localStorage.setItem("accounts", JSON.stringify(accounts));
-            // keep user.balance in sync with main account
             user.balance = accounts.main;
             localStorage.setItem("campusCashUser", JSON.stringify(user));
         }
 
-        function renderBalances() {
-    document.getElementById("main-account-number").textContent = user.accountNumber || "N/A";
-    document.getElementById("main-balance").textContent = `R${accounts.main.toFixed(2)}`;
-    document.getElementById("savings-account-number").textContent = user.savingsAccountNumber || "N/A";
-    document.getElementById("savings-balance").textContent = `R${accounts.savings.toFixed(2)}`;
-}
+        function saveTransaction(type, amount, from = null, to = null) {
+            const date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+            transactions.push({ date, type, amount, from, to });
+            localStorage.setItem("transactions", JSON.stringify(transactions));
+        }
 
+        function renderBalances() {
+            document.getElementById("main-account-number").textContent = user.accountNumber || "N/A";
+            document.getElementById("main-balance").textContent = `R${accounts.main.toFixed(2)}`;
+            document.getElementById("savings-balance").textContent = `R${accounts.savings.toFixed(2)}`;
+        }
 
         // ------------------------------
         // Transaction functions
         // ------------------------------
         function deposit(toAcc, amount) {
-    accounts[toAcc] += amount;
-    saveAccounts();
-    renderBalances();
-    recordTransaction("Deposit", amount, "-", toAcc, accounts[toAcc]); // ✅ NEW
-    alert(`✅ Deposit of R${amount.toFixed(2)} to ${toAcc} successful!`);
-}
+            accounts[toAcc] += amount;
+            saveAccounts();
+            saveTransaction("deposit", amount, null, toAcc);
+            renderBalances();
+            alert(`✅ Deposit of R${amount.toFixed(2)} to ${toAcc} successful!`);
+        }
 
-function withdraw(fromAcc, amount) {
-    if (amount > accounts[fromAcc]) {
-        alert("❌ Insufficient funds!");
-        return false;
-    }
-    accounts[fromAcc] -= amount;
-    saveAccounts();
-    renderBalances();
-    recordTransaction("Withdrawal", amount, fromAcc, "-", accounts[fromAcc]); // ✅ NEW
-    alert(`✅ Withdrawal of R${amount.toFixed(2)} from ${fromAcc} successful!`);
-    return true;
-}
+        function withdraw(fromAcc, amount) {
+            if (amount > accounts[fromAcc]) {
+                alert("❌ Insufficient funds!");
+                return false;
+            }
+            accounts[fromAcc] -= amount;
+            saveAccounts();
+            saveTransaction("withdraw", amount, fromAcc, null);
+            renderBalances();
+            alert(`✅ Withdrawal of R${amount.toFixed(2)} from ${fromAcc} successful!`);
+            return true;
+        }
 
-function transfer(fromAcc, toAcc, amount) {
-    if (amount > accounts[fromAcc]) {
-        alert("❌ Insufficient funds!");
-        return false;
-    }
-    accounts[fromAcc] -= amount;
-    if (toAcc !== "external") {
-        accounts[toAcc] += amount;
-    }
-    saveAccounts();
-    renderBalances();
-    recordTransaction("Transfer", amount, fromAcc, toAcc, accounts[fromAcc]); // ✅ NEW
-    alert(`✅ Transfer of R${amount.toFixed(2)} from ${fromAcc} to ${toAcc} successful!`);
-    return true;
-}
-
+        function transfer(fromAcc, toAcc, amount, externalAcc = null) {
+            if (amount > accounts[fromAcc]) {
+                alert("❌ Insufficient funds!");
+                return false;
+            }
+            accounts[fromAcc] -= amount;
+            if (toAcc !== "external") {
+                accounts[toAcc] += amount;
+            }
+            saveAccounts();
+            saveTransaction("transfer", amount, fromAcc, toAcc === "external" ? externalAcc || "External" : toAcc);
+            renderBalances();
+            alert(`✅ Transfer of R${amount.toFixed(2)} from ${fromAcc} to ${toAcc === "external" ? externalAcc || "External" : toAcc} successful!`);
+            return true;
+        }
 
         // ------------------------------
         // Event Listeners
@@ -271,7 +256,8 @@ function transfer(fromAcc, toAcc, amount) {
             const fromAcc = document.getElementById("transfer-from").value;
             const toAcc = document.getElementById("transfer-to").value;
             const amount = parseFloat(document.getElementById("transfer-amount").value);
-            if (amount > 0) transfer(fromAcc, toAcc, amount);
+            const externalAcc = document.getElementById("external-account").value;
+            if (amount > 0) transfer(fromAcc, toAcc, amount, externalAcc);
             this.reset();
         });
 
