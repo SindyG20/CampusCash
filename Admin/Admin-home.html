@@ -1,265 +1,446 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Admin Dashboard - Campus Management System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* -------- Basic Styles -------- */
-* {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
-body {background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);background-size: 400% 400%;animation: gradientBG 15s ease infinite;color: #333;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;}
-@keyframes gradientBG {0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-.container {display:flex;width:90%;max-width:1200px;height:85vh;background:rgba(255,255,255,0.95);border-radius:15px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,0.4);}
-.sidebar {width:280px;background:#2c3e50;color:white;padding:25px 0;overflow-y:auto;}
-.logo {text-align:center;padding:20px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:20px;}
-.bank-logo {width:80px;height:80px;margin:0 auto 10px;}
-.bank-logo img {width:100%;height:100%;object-fit:contain;display:block;}
-.logo h1 {font-size:20px;margin-top:0;}
-.menu-item {padding:15px 25px;display:flex;align-items:center;cursor:pointer;transition:all 0.3s ease;border-left:4px solid transparent;}
-.menu-item:hover {background:#34495e;}
-.menu-item.active {background:#3498db;border-left:4px solid #f1c40f;}
-.menu-item i {margin-right:15px;font-size:18px;width:24px;text-align:center;}
-.content {flex:1;padding:30px;overflow-y:auto;}
-.content-section {display:none;}
-.content-section.active {display:block;animation:fadeIn 0.5s ease;}
-@keyframes fadeIn {from {opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-h2 {color:#2c3e50;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid #3498db;}
-.stats {display:flex;flex-wrap:wrap;gap:15px;margin-bottom:25px;}
-.stat-box {flex:1;min-width:200px;background:white;padding:20px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,0.08);text-align:center;}
-.stat-box h3 {color:#7f8c8d;font-size:16px;margin-bottom:10px;}
-.stat-box .number {font-size:32px;font-weight:bold;color:#2c3e50;}
-.search-box {display:flex;margin-bottom:20px;}
-.search-box input {flex:1;padding:12px 15px;border:1px solid #ddd;border-radius:4px 0 0 4px;font-size:16px;}
-.search-box button {background:#3498db;color:white;border:none;padding:0 20px;border-radius:0 4px 4px 0;cursor:pointer;}
-.action-btn {background:#27ae60;color:white;padding:8px 15px;margin-bottom:15px;border:none;border-radius:5px;cursor:pointer;transition:0.3s;}
-.action-btn:hover {background:#219150;}
-.table-container {overflow-x:auto;}
-table {width:100%;border-collapse:collapse;margin-bottom:20px;}
-table th, table td {padding:12px;border:1px solid #ddd;text-align:left;}
-table th {background:#3498db;color:white;}
-.action-icons button {background:none;border:none;cursor:pointer;margin:0 5px;font-size:16px;}
-.action-icons .edit {color:#2980b9;}
-.action-icons .delete {color:#c0392b;}
-@media (max-width:900px) {.container{flex-direction:column;height:auto;}.sidebar{width:100%;height:auto;}.menu-items{display:flex;flex-wrap:wrap;justify-content:center;}.menu-item{flex:1;min-width:150px;justify-content:center;border-left:none;border-bottom:4px solid transparent;}.menu-item.active{border-left:none;border-bottom:4px solid #f1c40f;}}
-@media (max-width:600px){.stats{flex-direction:column;}.menu-item{min-width:100%;}}
+/* (kept your original styling, slightly trimmed for clarity) */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Arial,sans-serif}
+body{background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);background-size:400% 400%;animation:gradientBG 15s ease infinite;color:#333;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+@keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.container{display:flex;width:90%;max-width:1200px;height:85vh;background:rgba(255,255,255,0.95);border-radius:15px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,0.4)}
+.sidebar{width:280px;background:#2c3e50;color:white;padding:25px 0;overflow-y:auto}
+.logo{text-align:center;padding:20px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:20px}
+.bank-logo{width:80px;height:80px;margin:0 auto 10px}
+.bank-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.logo h1{font-size:20px;margin-top:0}
+.menu-item{padding:15px 25px;display:flex;align-items:center;cursor:pointer;transition:all .3s ease;border-left:4px solid transparent}
+.menu-item:hover{background:#34495e}
+.menu-item.active{background:#3498db;border-left:4px solid #f1c40f}
+.menu-item i{margin-right:15px;font-size:18px;width:24px;text-align:center}
+.content{flex:1;padding:30px;overflow-y:auto}
+.content-section{display:none}
+.content-section.active{display:block}
+h2{color:#2c3e50;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid #3498db}
+.stats{display:flex;flex-wrap:wrap;gap:15px;margin-bottom:25px}
+.stat-box{flex:1;min-width:200px;background:white;padding:20px;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,0.08);text-align:center}
+.stat-box h3{color:#7f8c8d;font-size:16px;margin-bottom:10px}
+.stat-box .number{font-size:32px;font-weight:bold;color:#2c3e50}
+.search-box{display:flex;margin-bottom:20px}
+.search-box input{flex:1;padding:12px 15px;border:1px solid #ddd;border-radius:4px 0 0 4px;font-size:16px}
+.search-box button{background:#3498db;color:white;border:none;padding:0 20px;border-radius:0 4px 4px 0;cursor:pointer}
+.action-btn{background:#27ae60;color:white;padding:8px 15px;margin-bottom:15px;border:none;border-radius:5px;cursor:pointer;transition:0.3s}
+.action-btn:hover{background:#219150}
+.table-container{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-bottom:20px}
+table th,table td{padding:12px;border:1px solid #ddd;text-align:left}
+table th{background:#3498db;color:white}
+.action-icons button{background:none;border:none;cursor:pointer;margin:0 5px;font-size:16px}
+.action-icons .edit{color:#2980b9}
+.action-icons .delete{color:#c0392b}
+@media(max-width:900px){.container{flex-direction:column;height:auto}.sidebar{width:100%;height:auto}.menu-items{display:flex;flex-wrap:wrap;justify-content:center}.menu-item{flex:1;min-width:150px;justify-content:center;border-left:none;border-bottom:4px solid transparent}.menu-item.active{border-left:none;border-bottom:4px solid #f1c40f}}
+@media(max-width:600px){.stats{flex-direction:column}.menu-item{min-width:100%}}
+.small{font-size:13px;color:#666;margin-top:6px}
 </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo">
-            <div class="bank-logo"><img src="logo.png" alt="NWU Bank Logo"></div>
-            <h1>Campus Admin</h1>
-        </div>
-        <div class="menu-items">
-            <div class="menu-item active" data-target="students"><i class="fas fa-user-graduate"></i><span>Managing Students</span></div>
-            <div class="menu-item" data-target="employees"><i class="fas fa-users"></i><span>Maintaining Employees</span></div>
-            
-            <a href="Admin-index.html"><i class="fas fa-arrow-left"></i> Logout</a>
-        </div>
+  <div class="sidebar">
+    <div class="logo">
+      <div class="bank-logo"><img src="logo.png" alt="NWU Bank Logo"></div>
+      <h1>Campus Admin</h1>
+    </div>
+    <div class="menu-items">
+      <div class="menu-item active" data-target="students"><i class="fas fa-user-graduate"></i><span>Managing Students</span></div>
+      <div class="menu-item" data-target="employees"><i class="fas fa-users"></i><span>Maintaining Employees</span></div>
+      <a href="Admin-index.html" style="color:#fff;display:block;padding:12px 25px;text-decoration:none"><i class="fas fa-arrow-left"></i> Logout</a>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="content-section active" id="students">
+      <h2>Manage Students</h2>
+      <div class="stats">
+        <div class="stat-box"><h3>Total Students</h3><div class="number" id="totalStudents">0</div></div>
+        <div class="stat-box"><h3>New This Month</h3><div class="number" id="newThisMonth">0</div></div>
+        <div class="stat-box"><h3>Pending Actions</h3><div class="number" id="pendingStudents">0</div></div>
+      </div>
+
+      <div class="search-box">
+        <input type="text" id="searchStudent" placeholder="Search by name or student number...">
+        <button id="searchBtn"><i class="fas fa-search"></i></button>
+      </div>
+
+      <button class="action-btn" id="addStudentBtn"><i class="fas fa-plus"></i> Add Student</button>
+      <div class="table-container">
+        <table id="studentsTable">
+          <thead>
+            <tr><th>Student Number</th><th>Name</th><th>Email</th><th>Actions</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="small">This admin reads registrations produced by your registration page. If you use a backend API, set <code>apiBaseUrl</code> in the script.</div>
     </div>
 
-    <!-- Content -->
-    <div class="content">
-        <!-- Students -->
-        <div class="content-section active" id="students">
-            <h2>Manage Students</h2>
-            <div class="stats">
-                <div class="stat-box"><h3>Total Students</h3><div class="number" id="totalStudents">0</div></div>
-                <div class="stat-box"><h3>New This Month</h3><div class="number" id="newThisMonth">0</div></div>
-                <div class="stat-box"><h3>Pending Actions</h3><div class="number" id="pendingStudents">0</div></div>
-            </div>
-            <div class="search-box">
-                <input type="text" id="searchStudent" placeholder="Search by name or student number...">
-                <button><i class="fas fa-search"></i></button>
-            </div>
-            <button class="action-btn" id="addStudentBtn"><i class="fas fa-plus"></i> Add Student</button>
-            <div class="table-container">
-                <table id="studentsTable">
-                    <thead>
-                        <tr><th>Student Number</th><th>Name</th><th>Email</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody>
-                        <!-- Dynamic student rows will load here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Employees -->
-        <div class="content-section" id="employees">
-            <h2>Manage Employees</h2>
-            <div class="stats">
-                <div class="stat-box"><h3>Total Employees</h3><div class="number">0</div></div>
-                <div class="stat-box"><h3>New This Month</h3><div class="number">0</div></div>
-                <div class="stat-box"><h3>Pending Actions</h3><div class="number">0</div></div>
-            </div>
-            <div class="search-box">
-                <input type="text" placeholder="Search employees by name, ID, or role...">
-                <button><i class="fas fa-search"></i></button>
-            </div>
-            <button class="action-btn"><i class="fas fa-plus"></i> Add Employee</button>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr><th>ID</th><th>Name</th><th>Role</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
+    <div class="content-section" id="employees">
+      <h2>Manage Employees</h2>
+      <div class="stats">
+        <div class="stat-box"><h3>Total Employees</h3><div class="number">0</div></div>
+        <div class="stat-box"><h3>New This Month</h3><div class="number">0</div></div>
+        <div class="stat-box"><h3>Pending Actions</h3><div class="number">0</div></div>
+      </div>
+      <div class="search-box">
+        <input type="text" placeholder="Search employees by name, ID, or role...">
+        <button><i class="fas fa-search"></i></button>
+      </div>
+      <button class="action-btn"><i class="fas fa-plus"></i> Add Employee</button>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
+
+  </div>
 </div>
 
-
 <script>
-const menuItems = document.querySelectorAll('.menu-item');
-const contentSections = document.querySelectorAll('.content-section');
+/*
+ Admin script that:
+  - Loads registrations from API (if apiBaseUrl set) or from localStorage keys.
+  - Allows Add/Edit/Delete and writes back to the origin (API/localStorage).
+*/
 
-// Sidebar menu toggle
-menuItems.forEach(item => {
-    item.addEventListener('click', () => {
-        const target = item.getAttribute('data-target');
-        menuItems.forEach(mi => mi.classList.remove('active'));
-        contentSections.forEach(section => section.classList.remove('active'));
-        item.classList.add('active');
-        document.getElementById(target).classList.add('active');
-    });
-});
+// ---------- Configuration ----------
+const apiBaseUrl = null; // set to e.g. "http://localhost:5264/api/students" if you have an API
+const POSSIBLE_KEYS = ['registrations','students','registeredStudents','studentRegistrations'];
 
-const apiBaseUrl = "http://localhost:5264/api/students"; // 🔹 Your API
+// ---------- Helpers ----------
+function generateId(){ return 's_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function nowIso(){ return new Date().toISOString(); }
+function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
-async function loadStudents() {
-    try {
-        const response = await fetch(apiBaseUrl, {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ studentNumber, name:fullname, email, password })
-});
-const newStudent = await response.json();
-
-// Add row immediately
-const tbody = document.querySelector("#studentsTable tbody");
-tbody.innerHTML += `
-    <tr>
-        <td>${newStudent.studentNumber}</td>
-        <td>${newStudent.name}</td>
-        <td>${newStudent.email}</td>
-        <td class="action-icons">
-            <button class="edit" onclick="editStudent('${newStudent.studentNumber}')"><i class="fas fa-edit"></i></button>
-            <button class="delete" onclick="deleteStudent('${newStudent.studentNumber}')"><i class="fas fa-trash"></i></button>
-        </td>
-    </tr>
-`;
-
-            tbody.innerHTML += row;
-        
-
-        // Stats calculation
-        const now = new Date();
-        const thisMonth = now.getMonth();
-        const thisYear = now.getFullYear();
-
-        const newThisMonth = students.filter(s => {
-            const created = new Date(s.createdAt);
-            return created.getMonth() === thisMonth && created.getFullYear() === thisYear;
-        }).length;
-
-        const pending = students.filter(s => s.status?.toLowerCase() === "pending").length;
-
-        document.getElementById("totalStudents").innerText = students.length;
-        document.getElementById("newThisMonth").innerText = newThisMonth;
-        document.getElementById("pendingStudents").innerText = pending;
-
-    } catch (error) {
-        console.error("Error loading students:", error);
-    }
+function normalize(raw){
+  if(!raw) return null;
+  return {
+    id: raw.id || raw.studentNumber || generateId(),
+    studentNumber: raw.studentNumber || raw.StudentNumber || raw.studentId || raw.studentNo || '',
+    fullname: raw.fullName || raw.fullname || raw.FullName || raw.name || '',
+    email: raw.email || raw.Email || '',
+    dateOfBirth: raw.dateOfBirth || raw.DOB || raw.dob || '',
+    address: raw.address || raw.Address || '',
+    accountType: raw.accountType || raw.AccountType || '',
+    passwordHash: raw.passwordHash || raw.password || '',
+    createdAt: raw.createdAt || raw.created || raw.dateRegistered || nowIso(),
+    status: raw.status || 'active',
+    _originKey: raw._originKey || null
+  };
 }
 
-// Add Student
-document.getElementById("addStudentBtn").addEventListener("click", async () => {
-    const studentNumber = prompt("Enter Student Number:");
-    const name = prompt("Enter Name:");
-    const email = prompt("Enter Email:");
-    const password = prompt("Enter Password:");
+// ---------- LocalStorage helpers ----------
+function loadFromPossibleKeys(){
+  const result = [];
+  // arrays under known keys
+  POSSIBLE_KEYS.forEach(key => {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return;
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return;
+      arr.forEach(item => {
+        const n = normalize(item);
+        if (!n._originKey) n._originKey = key;
+        if (!n.id) n.id = generateId();
+        result.push(n);
+      });
+    } catch(e){ /* ignore malformed */ }
+  });
 
-    if (!studentNumber || !fullname || !email || !password) {
-        return alert("All fields are required!");
-    }
+  // single-user entries such as campusCashUser or any key whose value looks like a registration
+  for (let i=0;i<localStorage.length;i++){
+    const key = localStorage.key(i);
+    if (!key) continue;
+    // skip keys we've already processed
+    if (POSSIBLE_KEYS.includes(key)) continue;
 
     try {
-        const response = await fetch(apiBaseUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ studentNumber, fullname, email, password })
-        });
-
-        const newStudent = await response.json(); // backend must return the created student
-
-        // Add row immediately to the table
-        const tbody = document.querySelector("#studentsTable tbody");
-        const row = `
-            <tr>
-                <td>${newStudent.studentNumber}</td>
-                <td>${newStudent.fullname}</td>
-                <td>${newStudent.email}</td>
-                <td class="action-icons">
-                    <button class="edit" onclick="editStudent('${newStudent.studentNumber}')"><i class="fas fa-edit"></i></button>
-                    <button class="delete" onclick="deleteStudent('${newStudent.studentNumber}')"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-        `;
-        tbody.insertAdjacentHTML("beforeend", row);
-
-    } catch (error) {
-        console.error("Error adding student:", error);
-        alert("Failed to add student. Check console for details.");
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
+      const parsed = JSON.parse(raw);
+      // If parsed is object with studentNumber and fullName (or studentId), treat it as a registration
+      if (parsed && typeof parsed === 'object' && (parsed.studentNumber || parsed.studentId || parsed.fullName || parsed.fullName === '') ){
+        const n = normalize(parsed);
+        if (!n._originKey) n._originKey = key;
+        if (!n.id) n.id = generateId();
+        // avoid duplicates: check by studentNumber or id
+        const exists = result.find(x => (x.studentNumber && x.studentNumber === n.studentNumber) || (x.id && x.id === n.id));
+        if (!exists) result.push(n);
+      }
+    } catch(e){
+      // not JSON or parse failed -> skip
     }
-});
+  }
 
+  // deduplicate by studentNumber or id
+  const dedup = [];
+  const seen = new Set();
+  result.forEach(r => {
+    const key = (r.studentNumber || r.id || '') + '|' + (r.email || '');
+    if (!seen.has(key)){
+      seen.add(key);
+      dedup.push(r);
+    }
+  });
 
-
-// Delete a student
-async function deleteStudent(studentNumber) {
-    if(!confirm("Are you sure you want to delete this student?")) return;
-    try {
-        await fetch(`${apiBaseUrl}/${studentNumber}`, { method:"DELETE" });
-        loadStudents();
-    } catch(e) { console.error(e); }
+  return dedup;
 }
 
-// Edit student
-async function editStudent(studentNumber) {
-    const newName = prompt("Enter new name:");
-    const newEmail = prompt("Enter new email:");
-    if(!newName || !newEmail) return;
-    try {
-        await fetch(`${apiBaseUrl}/${studentNumber}`, {
-            method:"PUT",
-            headers:{"Content-Type":"application/json"},
-            body: JSON.stringify({ fullname:newName, email:newEmail })
-        });
-        loadStudents();
-    } catch(e) { console.error(e); }
+function saveToLocalOrigin(student){
+  const origin = student._originKey || POSSIBLE_KEYS[0];
+  let arr = [];
+  try { arr = JSON.parse(localStorage.getItem(origin) || '[]'); } catch(e){ arr = []; }
+  const idx = arr.findIndex(x => (x.studentNumber && x.studentNumber === student.studentNumber) || (x.id && x.id === student.id));
+  const toSave = Object.assign({}, student);
+  delete toSave._originKey;
+  if (idx === -1) arr.push(toSave); else arr[idx] = Object.assign({}, arr[idx], toSave);
+  localStorage.setItem(origin, JSON.stringify(arr));
+  student._originKey = origin;
 }
 
-// Search functionality (by Name or Student Number)
-document.getElementById("searchStudent").addEventListener("input", (e) => {
-    const filter = e.target.value.toLowerCase();
-    const rows = document.querySelectorAll("#studentsTable tbody tr");
-    rows.forEach(row => {
-        const name = row.cells[1].innerText.toLowerCase();
-        const number = row.cells[0].innerText.toLowerCase();
-        row.style.display = (name.includes(filter) || number.includes(filter)) ? "" : "none";
-    });
+function deleteFromLocalOrigin(student){
+  const origin = student._originKey || POSSIBLE_KEYS[0];
+  try {
+    let arr = JSON.parse(localStorage.getItem(origin) || '[]');
+    const idx = arr.findIndex(x => (x.studentNumber && x.studentNumber === student.studentNumber) || (x.id && x.id === student.id));
+    if (idx !== -1) {
+      arr.splice(idx,1);
+      localStorage.setItem(origin, JSON.stringify(arr));
+    }
+  } catch(e){ console.error(e); }
+}
+
+// ---------- Optional API helpers ----------
+async function apiGetStudents(){
+  if(!apiBaseUrl) throw new Error('no api configured');
+  const r = await fetch(apiBaseUrl);
+  if (!r.ok) throw new Error('api GET failed');
+  const arr = await r.json();
+  return (Array.isArray(arr) ? arr : []).map(normalize);
+}
+async function apiPostStudent(st){
+  if(!apiBaseUrl) throw new Error('no api configured');
+  const r = await fetch(apiBaseUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(st) });
+  if(!r.ok) throw new Error('api POST failed');
+  const created = await r.json();
+  return normalize(created);
+}
+async function apiPutStudent(st){
+  if(!apiBaseUrl) throw new Error('no api configured');
+  const id = encodeURIComponent(st.studentNumber || st.id);
+  const r = await fetch(`${apiBaseUrl}/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(st) });
+  if(!r.ok) throw new Error('api PUT failed');
+  const updated = await r.json();
+  return normalize(updated);
+}
+async function apiDeleteStudent(st){
+  if(!apiBaseUrl) throw new Error('no api configured');
+  const id = encodeURIComponent(st.studentNumber || st.id);
+  const r = await fetch(`${apiBaseUrl}/${id}`, { method:'DELETE' });
+  if(!r.ok) throw new Error('api DELETE failed');
+  return true;
+}
+
+// ---------- UI & State ----------
+const tbody = document.querySelector('#studentsTable tbody');
+const totalEl = document.getElementById('totalStudents');
+const newMonthEl = document.getElementById('newThisMonth');
+const pendingEl = document.getElementById('pendingStudents');
+const searchInput = document.getElementById('searchStudent');
+
+let studentsCache = []; // normalized student objects with _originKey
+
+function renderTable(){
+  const q = (searchInput.value || '').trim().toLowerCase();
+  tbody.innerHTML = '';
+  const filtered = studentsCache.filter(s => {
+    if (!q) return true;
+    return (s.fullname || '').toLowerCase().includes(q) || (String(s.studentNumber || '')).toLowerCase().includes(q) || (s.email||'').toLowerCase().includes(q);
+  });
+  filtered.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHtml(s.studentNumber)}</td>
+      <td>${escapeHtml(s.fullname)}</td>
+      <td>${escapeHtml(s.email)}</td>
+      <td class="action-icons">
+        <button class="edit" data-id="${s.id}" title="Edit"><i class="fas fa-edit"></i></button>
+        <button class="delete" data-id="${s.id}" title="Delete"><i class="fas fa-trash"></i></button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // stats
+  const now = new Date();
+  const thisMonth = now.getMonth();
+  const thisYear = now.getFullYear();
+  const newThisMonth = studentsCache.filter(s => {
+    const d = new Date(s.createdAt || nowIso());
+    return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+  }).length;
+  const pending = studentsCache.filter(s => (s.status||'').toLowerCase() === 'pending').length;
+
+  totalEl.innerText = studentsCache.length;
+  newMonthEl.innerText = newThisMonth;
+  pendingEl.innerText = pending;
+}
+
+// Load students (API preferred, fallback to localStorage)
+async function loadStudents(){
+  try {
+    if (apiBaseUrl) {
+      try {
+        const apiList = await apiGetStudents();
+        studentsCache = apiList.map(x => Object.assign({}, x, {_originKey:'api'}));
+        renderTable();
+        return;
+      } catch(e){
+        console.warn('API fetch failed — falling back to local storage', e);
+      }
+    }
+    studentsCache = loadFromPossibleKeys();
+    // ensure there's at least a registrations array saved locally so future adds persist
+    if (!localStorage.getItem(POSSIBLE_KEYS[0])) localStorage.setItem(POSSIBLE_KEYS[0], JSON.stringify([]));
+    renderTable();
+  } catch(e){
+    console.error(e);
+  }
+}
+
+// ---------- Add Student (prompt-based for now) ----------
+document.getElementById('addStudentBtn').addEventListener('click', async () => {
+  const studentNumber = prompt('Student Number:');
+  if (!studentNumber) return;
+  const fullname = prompt('Full Name:');
+  if (!fullname) return;
+  const email = prompt('Email:');
+  if (!email) return;
+  const password = prompt('Password (temporary):') || '';
+
+  // uniqueness check
+  if (studentsCache.find(s => String(s.studentNumber) === String(studentNumber))) {
+    return alert('A student with that number already exists.');
+  }
+
+  const studentObj = normalize({
+    studentNumber,
+    fullName: fullname,
+    email,
+    passwordHash: password,
+    createdAt: nowIso(),
+    status: 'active'
+  });
+
+  try {
+    if (apiBaseUrl) {
+      try {
+        const created = await apiPostStudent(studentObj);
+        created._originKey = 'api';
+        studentsCache.push(created);
+        renderTable();
+        return alert('Student created via API.');
+      } catch(apiErr){
+        console.warn('API create failed — saving locally instead', apiErr);
+      }
+    }
+    // save locally
+    saveToLocalOrigin(studentObj);
+    studentsCache.push(studentObj);
+    renderTable();
+    alert('Student added to frontend storage.');
+  } catch(err){
+    console.error(err);
+    alert('Failed to add student.');
+  }
 });
 
-// Load students on page load
-window.onload = loadStudents;
+// ---------- Edit / Delete (delegated) ----------
+tbody.addEventListener('click', async (e) => {
+  const editBtn = e.target.closest('button.edit');
+  const delBtn = e.target.closest('button.delete');
+
+  if (editBtn) {
+    const id = editBtn.getAttribute('data-id');
+    const s = studentsCache.find(x => x.id === id);
+    if (!s) return alert('Student not found.');
+    const newName = prompt('Full name:', s.fullname) || s.fullname;
+    const newEmail = prompt('Email:', s.email) || s.email;
+
+    const updated = Object.assign({}, s, { fullname: newName.trim(), email: newEmail.trim() });
+
+    try {
+      if (updated._originKey === 'api' && apiBaseUrl) {
+        try {
+          const res = await apiPutStudent(updated);
+          res._originKey = 'api';
+          const idx = studentsCache.findIndex(x => x.id === id);
+          if (idx !== -1) studentsCache[idx] = res;
+          renderTable();
+          return alert('Updated via API.');
+        } catch(apiErr){
+          console.warn('API update failed, saving locally instead', apiErr);
+        }
+      }
+      // local save
+      saveToLocalOrigin(updated);
+      const idx = studentsCache.findIndex(x => x.id === id);
+      if (idx !== -1) studentsCache[idx] = updated;
+      renderTable();
+      alert('Student updated.');
+    } catch(err){
+      console.error(err);
+      alert('Failed to update student.');
+    }
+  }
+
+  if (delBtn) {
+    const id = delBtn.getAttribute('data-id');
+    const s = studentsCache.find(x => x.id === id);
+    if (!s) return alert('Student not found.');
+    if (!confirm(`Delete ${s.fullname} (${s.studentNumber})?`)) return;
+    try {
+      if (s._originKey === 'api' && apiBaseUrl) {
+        try {
+          await apiDeleteStudent(s);
+          studentsCache = studentsCache.filter(x => x.id !== id);
+          renderTable();
+          return alert('Deleted via API.');
+        } catch(apiErr){
+          console.warn('API delete failed, falling back to local delete', apiErr);
+        }
+      }
+      deleteFromLocalOrigin(s);
+      studentsCache = studentsCache.filter(x => x.id !== id);
+      renderTable();
+      alert('Deleted from frontend storage.');
+    } catch(err){
+      console.error(err);
+      alert('Failed to delete student.');
+    }
+  }
+});
+
+// ---------- Search ----------
+document.getElementById('searchBtn').addEventListener('click', renderTable);
+searchInput.addEventListener('input', renderTable);
+
+// ---------- Init ----------
+window.addEventListener('DOMContentLoaded', loadStudents);
 </script>
-
 </body>
 </html>
