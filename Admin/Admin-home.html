@@ -167,7 +167,7 @@ async function loadStudents() {
             let row = `
                 <tr>
                     <td>${student.studentNumber}</td>
-                    <td>${student.name}</td>
+                    <td>${student.fullname}</td>  <!-- corrected field -->
                     <td>${student.email}</td>
                     <td class="action-icons">
                         <button class="edit" onclick="editStudent('${student.studentNumber}')"><i class="fas fa-edit"></i></button>
@@ -203,11 +203,11 @@ async function loadStudents() {
 // Add Student
 document.getElementById("addStudentBtn").addEventListener("click", async () => {
     const studentNumber = prompt("Enter Student Number:");
-    const name = prompt("Enter Name:");
+    const fullname = prompt("Enter Name:");
     const email = prompt("Enter Email:");
     const password = prompt("Enter Password:");
 
-    if(!studentNumber || !name || !email || !password) return alert("All fields are required!");
+    if(!studentNumber || !fullname || !email || !password) return alert("All fields are required!");
 
     try {
         await fetch(apiBaseUrl, {
@@ -223,10 +223,10 @@ document.getElementById("addStudentBtn").addEventListener("click", async () => {
         tbody.prepend(msgRow);
 
         // Remove message after 3 seconds and reload students
-        setTimeout(() => {
-            msgRow.remove();
-            loadStudents();
-        }, 3000);
+        setTimeout(() => msgRow.remove(), 3000);
+
+        // Reload table immediately
+        await loadStudents();
 
     } catch (error) {
         console.error("Error adding student:", error);
