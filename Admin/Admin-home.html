@@ -6,7 +6,7 @@
 <title>Admin Dashboard - Campus Management System</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* (kept your original styling, slightly trimmed for clarity) */
+/* (kept your original styling, unchanged) */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Arial,sans-serif}
 body{background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);background-size:400% 400%;animation:gradientBG 15s ease infinite;color:#333;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
 @keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -85,48 +85,66 @@ table th{background:#3498db;color:white}
       </div>
       <div class="small">This admin reads registrations produced by your registration page. If you use a backend API, set <code>apiBaseUrl</code> in the script.</div>
     </div>
-
+<!--EMPLOYEES-->
     <div class="content-section" id="employees">
       <h2>Manage Employees</h2>
       <div class="stats">
-        <div class="stat-box"><h3>Total Employees</h3><div class="number">0</div></div>
-        <div class="stat-box"><h3>New This Month</h3><div class="number">0</div></div>
-        <div class="stat-box"><h3>Pending Actions</h3><div class="number">0</div></div>
+        <div class="stat-box"><h3>Total Employees</h3><div class="number" id="totalEmployees">0</div></div>
+        <div class="stat-box"><h3>New This Month</h3><div class="number" id="newEmployeesThisMonth">0</div></div>
+        <div class="stat-box"><h3>Pending Actions</h3><div class="number" id="pendingEmployees">0</div></div>
       </div>
       <div class="search-box">
-        <input type="text" placeholder="Search employees by name, ID, or role...">
-        <button><i class="fas fa-search"></i></button>
+        <input type="text" id="searchEmployee" placeholder="Search employees by name, ID, or role...">
+        <button id="searchEmployeeBtn"><i class="fas fa-search"></i></button>
       </div>
-      <button class="action-btn"><i class="fas fa-plus"></i> Add Employee</button>
+      <button class="action-btn" id="addEmployeeBtn"><i class="fas fa-plus"></i> Add Employee</button>
       <div class="table-container">
-        <table>
+        <table id="employeesTable">
           <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Actions</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
+
 /*
  Admin script that:
   - Loads registrations from API (if apiBaseUrl set) or from localStorage keys.
   - Allows Add/Edit/Delete and writes back to the origin (API/localStorage).
+  - Also keeps a 'users' array in localStorage so admin-created accounts can log in.
+  - Extended to handle employees with similar functionality.
 */
 
 // ---------- Configuration ----------
 const apiBaseUrl = null; // set to e.g. "http://localhost:5264/api/students" if you have an API
-const POSSIBLE_KEYS = ['registrations','students','registeredStudents','studentRegistrations'];
+const POSSIBLE_STUDENT_KEYS = ['registrations','students','registeredStudents','studentRegistrations'];
+const POSSIBLE_EMPLOYEE_KEYS = ['employees','staff','employeeRegistrations'];
+const USERS_KEY = 'users'; // localStorage key that stores login-capable users
 
 // ---------- Helpers ----------
-function generateId(){ return 's_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function generateId(){ return 'e_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function nowIso(){ return new Date().toISOString(); }
 function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
-function normalize(raw){
+function normalize(raw, type = 'student'){
   if(!raw) return null;
+  if (type === 'employee') {
+    return {
+      id: raw.id || raw.employeeId || generateId(),
+      employeeId: raw.employeeId || raw.id || '',
+      fullname: raw.fullName || raw.fullname || raw.name || '',
+      role: raw.role || raw.Role || '',
+      email: raw.email || raw.Email || '',
+      passwordHash: raw.passwordHash || raw.password || '',
+      createdAt: raw.createdAt || raw.created || nowIso(),
+      status: raw.status || 'active',
+      _originKey: raw._originKey || null,
+      _type: 'employee'
+    };
+  }
   return {
     id: raw.id || raw.studentNumber || generateId(),
     studentNumber: raw.studentNumber || raw.StudentNumber || raw.studentId || raw.studentNo || '',
@@ -135,25 +153,25 @@ function normalize(raw){
     dateOfBirth: raw.dateOfBirth || raw.DOB || raw.dob || '',
     address: raw.address || raw.Address || '',
     accountType: raw.accountType || raw.AccountType || '',
-    passwordHash: raw.passwordHash || raw.password || '',
+    passwordHash: raw.passwordHash || raw.password || raw.passwordHash || '',
     createdAt: raw.createdAt || raw.created || raw.dateRegistered || nowIso(),
     status: raw.status || 'active',
-    _originKey: raw._originKey || null
+    _originKey: raw._originKey || null,
+    _type: 'student'
   };
 }
 
 // ---------- LocalStorage helpers ----------
-function loadFromPossibleKeys(){
+function loadFromPossibleKeys(keys, type){
   const result = [];
-  // arrays under known keys
-  POSSIBLE_KEYS.forEach(key => {
+  keys.forEach(key => {
     try {
       const raw = localStorage.getItem(key);
       if (!raw) return;
       const arr = JSON.parse(raw);
       if (!Array.isArray(arr)) return;
       arr.forEach(item => {
-        const n = normalize(item);
+        const n = normalize(item, type);
         if (!n._originKey) n._originKey = key;
         if (!n.id) n.id = generateId();
         result.push(n);
@@ -161,36 +179,31 @@ function loadFromPossibleKeys(){
     } catch(e){ /* ignore malformed */ }
   });
 
-  // single-user entries such as campusCashUser or any key whose value looks like a registration
   for (let i=0;i<localStorage.length;i++){
     const key = localStorage.key(i);
-    if (!key) continue;
-    // skip keys we've already processed
-    if (POSSIBLE_KEYS.includes(key)) continue;
-
+    if (!key || keys.includes(key)) continue;
     try {
       const raw = localStorage.getItem(key);
       if (!raw) continue;
       const parsed = JSON.parse(raw);
-      // If parsed is object with studentNumber and fullName (or studentId), treat it as a registration
-      if (parsed && typeof parsed === 'object' && (parsed.studentNumber || parsed.studentId || parsed.fullName || parsed.fullName === '') ){
-        const n = normalize(parsed);
-        if (!n._originKey) n._originKey = key;
-        if (!n.id) n.id = generateId();
-        // avoid duplicates: check by studentNumber or id
-        const exists = result.find(x => (x.studentNumber && x.studentNumber === n.studentNumber) || (x.id && x.id === n.id));
-        if (!exists) result.push(n);
+      if (parsed && typeof parsed === 'object') {
+        const isEmployee = type === 'employee' && (parsed.employeeId || parsed.role || parsed.fullName || parsed.fullName === '');
+        const isStudent = type === 'student' && (parsed.studentNumber || parsed.studentId || parsed.fullName || parsed.fullName === '');
+        if (isEmployee || isStudent) {
+          const n = normalize(parsed, type);
+          if (!n._originKey) n._originKey = key;
+          if (!n.id) n.id = generateId();
+          const exists = result.find(x => (x.employeeId && x.employeeId === n.employeeId) || (x.studentNumber && x.studentNumber === n.studentNumber) || (x.id && x.id === n.id));
+          if (!exists) result.push(n);
+        }
       }
-    } catch(e){
-      // not JSON or parse failed -> skip
-    }
+    } catch(e){ /* skip */ }
   }
 
-  // deduplicate by studentNumber or id
   const dedup = [];
   const seen = new Set();
   result.forEach(r => {
-    const key = (r.studentNumber || r.id || '') + '|' + (r.email || '');
+    const key = (r.employeeId || r.studentNumber || r.id || '') + '|' + (r.email || '');
     if (!seen.has(key)){
       seen.add(key);
       dedup.push(r);
@@ -200,23 +213,26 @@ function loadFromPossibleKeys(){
   return dedup;
 }
 
-function saveToLocalOrigin(student){
-  const origin = student._originKey || POSSIBLE_KEYS[0];
+function saveToLocalOrigin(item, type){
+  const keys = type === 'employee' ? POSSIBLE_EMPLOYEE_KEYS : POSSIBLE_STUDENT_KEYS;
+  const origin = item._originKey || keys[0];
   let arr = [];
   try { arr = JSON.parse(localStorage.getItem(origin) || '[]'); } catch(e){ arr = []; }
-  const idx = arr.findIndex(x => (x.studentNumber && x.studentNumber === student.studentNumber) || (x.id && x.id === student.id));
-  const toSave = Object.assign({}, student);
+  const idx = arr.findIndex(x => (x.employeeId && x.employeeId === item.employeeId) || (x.studentNumber && x.studentNumber === item.studentNumber) || (x.id && x.id === item.id));
+  const toSave = Object.assign({}, item);
   delete toSave._originKey;
+  delete toSave._type;
   if (idx === -1) arr.push(toSave); else arr[idx] = Object.assign({}, arr[idx], toSave);
   localStorage.setItem(origin, JSON.stringify(arr));
-  student._originKey = origin;
+  item._originKey = origin;
 }
 
-function deleteFromLocalOrigin(student){
-  const origin = student._originKey || POSSIBLE_KEYS[0];
+function deleteFromLocalOrigin(item, type){
+  const keys = type === 'employee' ? POSSIBLE_EMPLOYEE_KEYS : POSSIBLE_STUDENT_KEYS;
+  const origin = item._originKey || keys[0];
   try {
     let arr = JSON.parse(localStorage.getItem(origin) || '[]');
-    const idx = arr.findIndex(x => (x.studentNumber && x.studentNumber === student.studentNumber) || (x.id && x.id === student.id));
+    const idx = arr.findIndex(x => (x.employeeId && x.employeeId === item.employeeId) || (x.studentNumber && x.studentNumber === item.studentNumber) || (x.id && x.id === item.id));
     if (idx !== -1) {
       arr.splice(idx,1);
       localStorage.setItem(origin, JSON.stringify(arr));
@@ -224,105 +240,193 @@ function deleteFromLocalOrigin(student){
   } catch(e){ console.error(e); }
 }
 
+// ---------- Users (login) helpers ----------
+function loadUsers(){
+  try {
+    const raw = localStorage.getItem(USERS_KEY) || '[]';
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch(e){ return []; }
+}
+function saveUsers(arr){
+  try { localStorage.setItem(USERS_KEY, JSON.stringify(arr)); } catch(e){ console.error(e); }
+}
+
+function addOrUpdateUserCredentials(item, type){
+  if (!item || !(item.studentNumber || item.employeeId)) return;
+  const users = loadUsers();
+  const idx = users.findIndex(u => u.studentNumber === item.studentNumber || u.employeeId === item.employeeId);
+  const userRecord = {
+    studentNumber: item.studentNumber || '',
+    employeeId: item.employeeId || '',
+    fullname: item.fullname || item.fullName || '',
+    email: item.email || '',
+    passwordHash: item.passwordHash || item.password || '',
+    _type: type
+  };
+  if (idx === -1) users.push(userRecord); else users[idx] = Object.assign({}, users[idx], userRecord);
+  saveUsers(users);
+}
+
+function removeUserCredentials(item, type){
+  if (!item || !(item.studentNumber || item.employeeId)) return;
+  const users = loadUsers();
+  const idx = users.findIndex(u => u.studentNumber === item.studentNumber || u.employeeId === item.employeeId);
+  if (idx !== -1){ users.splice(idx,1); saveUsers(users); }
+}
+
 // ---------- Optional API helpers ----------
-async function apiGetStudents(){
+async function apiGetItems(type){
   if(!apiBaseUrl) throw new Error('no api configured');
-  const r = await fetch(apiBaseUrl);
-  if (!r.ok) throw new Error('api GET failed');
+  const endpoint = type === 'employee' ? `${apiBaseUrl}/employees` : apiBaseUrl;
+  const r = await fetch(endpoint);
+  if (!r.ok) throw new Error(`api GET ${type} failed`);
   const arr = await r.json();
-  return (Array.isArray(arr) ? arr : []).map(normalize);
+  return (Array.isArray(arr) ? arr : []).map(item => normalize(item, type));
 }
-async function apiPostStudent(st){
+async function apiPostItem(item, type){
   if(!apiBaseUrl) throw new Error('no api configured');
-  const r = await fetch(apiBaseUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(st) });
-  if(!r.ok) throw new Error('api POST failed');
+  const endpoint = type === 'employee' ? `${apiBaseUrl}/employees` : apiBaseUrl;
+  const r = await fetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(item) });
+  if(!r.ok) throw new Error(`api POST ${type} failed`);
   const created = await r.json();
-  return normalize(created);
+  return normalize(created, type);
 }
-async function apiPutStudent(st){
+async function apiPutItem(item, type){
   if(!apiBaseUrl) throw new Error('no api configured');
-  const id = encodeURIComponent(st.studentNumber || st.id);
-  const r = await fetch(`${apiBaseUrl}/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(st) });
-  if(!r.ok) throw new Error('api PUT failed');
+  const endpoint = type === 'employee' ? `${apiBaseUrl}/employees` : apiBaseUrl;
+  const id = encodeURIComponent(item.employeeId || item.studentNumber || item.id);
+  const r = await fetch(`${endpoint}/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(item) });
+  if(!r.ok) throw new Error(`api PUT ${type} failed`);
   const updated = await r.json();
-  return normalize(updated);
+  return normalize(updated, type);
 }
-async function apiDeleteStudent(st){
+async function apiDeleteItem(item, type){
   if(!apiBaseUrl) throw new Error('no api configured');
-  const id = encodeURIComponent(st.studentNumber || st.id);
-  const r = await fetch(`${apiBaseUrl}/${id}`, { method:'DELETE' });
-  if(!r.ok) throw new Error('api DELETE failed');
+  const endpoint = type === 'employee' ? `${apiBaseUrl}/employees` : apiBaseUrl;
+  const id = encodeURIComponent(item.employeeId || item.studentNumber || item.id);
+  const r = await fetch(`${endpoint}/${id}`, { method:'DELETE' });
+  if(!r.ok) throw new Error(`api DELETE ${type} failed`);
   return true;
 }
 
 // ---------- UI & State ----------
-const tbody = document.querySelector('#studentsTable tbody');
-const totalEl = document.getElementById('totalStudents');
-const newMonthEl = document.getElementById('newThisMonth');
-const pendingEl = document.getElementById('pendingStudents');
-const searchInput = document.getElementById('searchStudent');
+const studentTbody = document.querySelector('#studentsTable tbody');
+const employeeTbody = document.querySelector('#employeesTable tbody');
+const totalStudentsEl = document.getElementById('totalStudents');
+const newStudentsMonthEl = document.getElementById('newThisMonth');
+const pendingStudentsEl = document.getElementById('pendingStudents');
+const totalEmployeesEl = document.getElementById('totalEmployees');
+const newEmployeesMonthEl = document.getElementById('newEmployeesThisMonth');
+const pendingEmployeesEl = document.getElementById('pendingEmployees');
+const searchStudentInput = document.getElementById('searchStudent');
+const searchEmployeeInput = document.getElementById('searchEmployee');
 
-let studentsCache = []; // normalized student objects with _originKey
+let studentsCache = [];
+let employeesCache = [];
 
-function renderTable(){
+function renderTable(type){
+  const tbody = type === 'employee' ? employeeTbody : studentTbody;
+  const searchInput = type === 'employee' ? searchEmployeeInput : searchStudentInput;
+  const cache = type === 'employee' ? employeesCache : studentsCache;
+  const totalEl = type === 'employee' ? totalEmployeesEl : totalStudentsEl;
+  const newMonthEl = type === 'employee' ? newEmployeesMonthEl : newStudentsMonthEl;
+  const pendingEl = type === 'employee' ? pendingEmployeesEl : pendingStudentsEl;
+
   const q = (searchInput.value || '').trim().toLowerCase();
   tbody.innerHTML = '';
-  const filtered = studentsCache.filter(s => {
+  const filtered = cache.filter(item => {
     if (!q) return true;
-    return (s.fullname || '').toLowerCase().includes(q) || (String(s.studentNumber || '')).toLowerCase().includes(q) || (s.email||'').toLowerCase().includes(q);
+    if (type === 'employee') {
+      return (item.fullname || '').toLowerCase().includes(q) || (String(item.employeeId || '')).toLowerCase().includes(q) || (item.role || '').toLowerCase().includes(q);
+    }
+    return (item.fullname || '').toLowerCase().includes(q) || (String(item.studentNumber || '')).toLowerCase().includes(q) || (item.email || '').toLowerCase().includes(q);
   });
-  filtered.forEach(s => {
+
+  filtered.forEach(item => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${escapeHtml(s.studentNumber)}</td>
-      <td>${escapeHtml(s.fullname)}</td>
-      <td>${escapeHtml(s.email)}</td>
-      <td class="action-icons">
-        <button class="edit" data-id="${s.id}" title="Edit"><i class="fas fa-edit"></i></button>
-        <button class="delete" data-id="${s.id}" title="Delete"><i class="fas fa-trash"></i></button>
-      </td>
-    `;
+    if (type === 'employee') {
+      tr.innerHTML = `
+        <td>${escapeHtml(item.employeeId)}</td>
+        <td>${escapeHtml(item.fullname)}</td>
+        <td>${escapeHtml(item.role)}</td>
+        <td class="action-icons">
+          <button class="edit" data-id="${item.id}" data-type="employee" title="Edit"><i class="fas fa-edit"></i></button>
+          <button class="delete" data-id="${item.id}" data-type="employee" title="Delete"><i class="fas fa-trash"></i></button>
+        </td>
+      `;
+    } else {
+      tr.innerHTML = `
+        <td>${escapeHtml(item.studentNumber)}</td>
+        <td>${escapeHtml(item.fullname)}</td>
+        <td>${escapeHtml(item.email)}</td>
+        <td class="action-icons">
+          <button class="edit" data-id="${item.id}" data-type="student" title="Edit"><i class="fas fa-edit"></i></button>
+          <button class="delete" data-id="${item.id}" data-type="student" title="Delete"><i class="fas fa-trash"></i></button>
+        </td>
+      `;
+    }
     tbody.appendChild(tr);
   });
 
-  // stats
   const now = new Date();
   const thisMonth = now.getMonth();
   const thisYear = now.getFullYear();
-  const newThisMonth = studentsCache.filter(s => {
-    const d = new Date(s.createdAt || nowIso());
+  const newThisMonth = cache.filter(item => {
+    const d = new Date(item.createdAt || nowIso());
     return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
   }).length;
-  const pending = studentsCache.filter(s => (s.status||'').toLowerCase() === 'pending').length;
+  const pending = cache.filter(item => (item.status || '').toLowerCase() === 'pending').length;
 
-  totalEl.innerText = studentsCache.length;
+  totalEl.innerText = cache.length;
   newMonthEl.innerText = newThisMonth;
   pendingEl.innerText = pending;
 }
 
-// Load students (API preferred, fallback to localStorage)
-async function loadStudents(){
+// Load items (API preferred, fallback to localStorage)
+async function loadItems(type){
+  const keys = type === 'employee' ? POSSIBLE_EMPLOYEE_KEYS : POSSIBLE_STUDENT_KEYS;
   try {
     if (apiBaseUrl) {
       try {
-        const apiList = await apiGetStudents();
-        studentsCache = apiList.map(x => Object.assign({}, x, {_originKey:'api'}));
-        renderTable();
+        const apiList = await apiGetItems(type);
+        const cache = apiList.map(x => Object.assign({}, x, {_originKey:'api'}));
+        if (type === 'employee') employeesCache = cache; else studentsCache = cache;
+        renderTable(type);
         return;
       } catch(e){
-        console.warn('API fetch failed — falling back to local storage', e);
+        console.warn(`API fetch failed for ${type} — falling back to local storage`, e);
       }
     }
-    studentsCache = loadFromPossibleKeys();
-    // ensure there's at least a registrations array saved locally so future adds persist
-    if (!localStorage.getItem(POSSIBLE_KEYS[0])) localStorage.setItem(POSSIBLE_KEYS[0], JSON.stringify([]));
-    renderTable();
+    const cache = loadFromPossibleKeys(keys, type);
+    if (type === 'employee') employeesCache = cache; else studentsCache = cache;
+    if (!localStorage.getItem(keys[0])) localStorage.setItem(keys[0], JSON.stringify([]));
+    renderTable(type);
   } catch(e){
     console.error(e);
   }
 }
 
-// ---------- Add Student (prompt-based for now) ----------
+// ---------- Section Switching ----------
+function switchSection(target) {
+  document.querySelectorAll('.content-section').forEach(section => {
+    section.classList.remove('active');
+  });
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  document.getElementById(target).classList.add('active');
+  document.querySelector(`.menu-item[data-target="${target}"]`).classList.add('active');
+}
+
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const target = item.getAttribute('data-target');
+    switchSection(target);
+  });
+});
+
+// ---------- Add Student ----------
 document.getElementById('addStudentBtn').addEventListener('click', async () => {
   const studentNumber = prompt('Student Number:');
   if (!studentNumber) return;
@@ -332,7 +436,6 @@ document.getElementById('addStudentBtn').addEventListener('click', async () => {
   if (!email) return;
   const password = prompt('Password (temporary):') || '';
 
-  // uniqueness check
   if (studentsCache.find(s => String(s.studentNumber) === String(studentNumber))) {
     return alert('A student with that number already exists.');
   }
@@ -344,103 +447,210 @@ document.getElementById('addStudentBtn').addEventListener('click', async () => {
     passwordHash: password,
     createdAt: nowIso(),
     status: 'active'
-  });
+  }, 'student');
 
   try {
     if (apiBaseUrl) {
       try {
-        const created = await apiPostStudent(studentObj);
+        const created = await apiPostItem(studentObj, 'student');
         created._originKey = 'api';
         studentsCache.push(created);
-        renderTable();
-        return alert('Student created via API.');
+        addOrUpdateUserCredentials(created, 'student');
+        renderTable('student');
+        return alert('Student created via API (and local user credentials added).');
       } catch(apiErr){
         console.warn('API create failed — saving locally instead', apiErr);
       }
     }
-    // save locally
-    saveToLocalOrigin(studentObj);
+    saveToLocalOrigin(studentObj, 'student');
+    addOrUpdateUserCredentials(studentObj, 'student');
     studentsCache.push(studentObj);
-    renderTable();
-    alert('Student added to frontend storage.');
+    renderTable('student');
+    alert('Student added to frontend storage and credentials saved (student can now log in).');
   } catch(err){
     console.error(err);
     alert('Failed to add student.');
   }
 });
 
+// ---------- Add Employee ----------
+document.getElementById('addEmployeeBtn').addEventListener('click', async () => {
+  const employeeId = prompt('Employee ID:');
+  if (!employeeId) return;
+  const fullname = prompt('Full Name:');
+  if (!fullname) return;
+  const role = prompt('Role:');
+  if (!role) return;
+  const email = prompt('Email:');
+  if (!email) return;
+  const password = prompt('Password (temporary):') || '';
+
+  if (employeesCache.find(e => String(e.employeeId) === String(employeeId))) {
+    return alert('An employee with that ID already exists.');
+  }
+
+  const employeeObj = normalize({
+    employeeId,
+    fullName: fullname,
+    role,
+    email,
+    passwordHash: password,
+    createdAt: nowIso(),
+    status: 'active'
+  }, 'employee');
+
+  try {
+    if (apiBaseUrl) {
+      try {
+        const created = await apiPostItem(employeeObj, 'employee');
+        created._originKey = 'api';
+        employeesCache.push(created);
+        addOrUpdateUserCredentials(created, 'employee');
+        renderTable('employee');
+        return alert('Employee created via API (and local user credentials added).');
+      } catch(apiErr){
+        console.warn('API create failed — saving locally instead', apiErr);
+      }
+    }
+    saveToLocalOrigin(employeeObj, 'employee');
+    addOrUpdateUserCredentials(employeeObj, 'employee');
+    employeesCache.push(employeeObj);
+    renderTable('employee');
+    alert('Employee added to frontend storage and credentials saved (employee can now log in).');
+  } catch(err){
+    console.error(err);
+    alert('Failed to add employee.');
+  }
+});
+
 // ---------- Edit / Delete (delegated) ----------
-tbody.addEventListener('click', async (e) => {
+document.querySelector('.content').addEventListener('click', async (e) => {
   const editBtn = e.target.closest('button.edit');
   const delBtn = e.target.closest('button.delete');
 
   if (editBtn) {
     const id = editBtn.getAttribute('data-id');
-    const s = studentsCache.find(x => x.id === id);
-    if (!s) return alert('Student not found.');
-    const newName = prompt('Full name:', s.fullname) || s.fullname;
-    const newEmail = prompt('Email:', s.email) || s.email;
+    const type = editBtn.getAttribute('data-type');
+    const cache = type === 'employee' ? employeesCache : studentsCache;
+    const item = cache.find(x => x.id === id);
+    if (!item) return alert(`${type} not found.`);
 
-    const updated = Object.assign({}, s, { fullname: newName.trim(), email: newEmail.trim() });
+    if (type === 'employee') {
+      const newName = prompt('Full name:', item.fullname) || item.fullname;
+      const newRole = prompt('Role:', item.role) || item.role;
+      const newEmail = prompt('Email:', item.email) || item.email;
 
-    try {
-      if (updated._originKey === 'api' && apiBaseUrl) {
-        try {
-          const res = await apiPutStudent(updated);
-          res._originKey = 'api';
-          const idx = studentsCache.findIndex(x => x.id === id);
-          if (idx !== -1) studentsCache[idx] = res;
-          renderTable();
-          return alert('Updated via API.');
-        } catch(apiErr){
-          console.warn('API update failed, saving locally instead', apiErr);
+      const updated = Object.assign({}, item, {
+        fullname: newName.trim(),
+        role: newRole.trim(),
+        email: newEmail.trim()
+      });
+
+      try {
+        if (updated._originKey === 'api' && apiBaseUrl) {
+          try {
+            const res = await apiPutItem(updated, 'employee');
+            res._originKey = 'api';
+            const idx = employeesCache.findIndex(x => x.id === id);
+            if (idx !== -1) employeesCache[idx] = res;
+            addOrUpdateUserCredentials(res, 'employee');
+            renderTable('employee');
+            return alert('Updated via API (user credentials updated locally as well).');
+          } catch(apiErr){
+            console.warn('API update failed, saving locally instead', apiErr);
+          }
         }
+        saveToLocalOrigin(updated, 'employee');
+        addOrUpdateUserCredentials(updated, 'employee');
+        const idx = employeesCache.findIndex(x => x.id === id);
+        if (idx !== -1) employeesCache[idx] = updated;
+        renderTable('employee');
+        alert('Employee updated.');
+      } catch(err){
+        console.error(err);
+        alert('Failed to update employee.');
       }
-      // local save
-      saveToLocalOrigin(updated);
-      const idx = studentsCache.findIndex(x => x.id === id);
-      if (idx !== -1) studentsCache[idx] = updated;
-      renderTable();
-      alert('Student updated.');
-    } catch(err){
-      console.error(err);
-      alert('Failed to update student.');
+    } else {
+      const newName = prompt('Full name:', item.fullname) || item.fullname;
+      const newEmail = prompt('Email:', item.email) || item.email;
+
+      const updated = Object.assign({}, item, {
+        fullname: newName.trim(),
+        email: newEmail.trim()
+      });
+
+      try {
+        if (updated._originKey === 'api' && apiBaseUrl) {
+          try {
+            const res = await apiPutItem(updated, 'student');
+            res._originKey = 'api';
+            const idx = studentsCache.findIndex(x => x.id === id);
+            if (idx !== -1) studentsCache[idx] = res;
+            addOrUpdateUserCredentials(res, 'student');
+            renderTable('student');
+            return alert('Updated via API (user credentials updated locally as well).');
+          } catch(apiErr){
+            console.warn('API update failed, saving locally instead', apiErr);
+          }
+        }
+        saveToLocalOrigin(updated, 'student');
+        addOrUpdateUserCredentials(updated, 'student');
+        const idx = studentsCache.findIndex(x => x.id === id);
+        if (idx !== -1) studentsCache[idx] = updated;
+        renderTable('student');
+        alert('Student updated.');
+      } catch(err){
+        console.error(err);
+        alert('Failed to update student.');
+      }
     }
   }
 
   if (delBtn) {
     const id = delBtn.getAttribute('data-id');
-    const s = studentsCache.find(x => x.id === id);
-    if (!s) return alert('Student not found.');
-    if (!confirm(`Delete ${s.fullname} (${s.studentNumber})?`)) return;
+    const type = delBtn.getAttribute('data-type');
+    const cache = type === 'employee' ? employeesCache : studentsCache;
+    const item = cache.find(x => x.id === id);
+    if (!item) return alert(`${type} not found.`);
+    if (!confirm(`Delete ${item.fullname} (${item.employeeId || item.studentNumber})?`)) return;
+
     try {
-      if (s._originKey === 'api' && apiBaseUrl) {
+      if (item._originKey === 'api' && apiBaseUrl) {
         try {
-          await apiDeleteStudent(s);
-          studentsCache = studentsCache.filter(x => x.id !== id);
-          renderTable();
-          return alert('Deleted via API.');
+          await apiDeleteItem(item, type);
+          if (type === 'employee') employeesCache = employeesCache.filter(x => x.id !== id);
+          else studentsCache = studentsCache.filter(x => x.id !== id);
+          removeUserCredentials(item, type);
+          renderTable(type);
+          return alert(`Deleted via API (credentials removed locally).`);
         } catch(apiErr){
-          console.warn('API delete failed, falling back to local delete', apiErr);
+          console.warn(`API delete failed, falling back to local delete`, apiErr);
         }
       }
-      deleteFromLocalOrigin(s);
-      studentsCache = studentsCache.filter(x => x.id !== id);
-      renderTable();
-      alert('Deleted from frontend storage.');
+      deleteFromLocalOrigin(item, type);
+      removeUserCredentials(item, type);
+      if (type === 'employee') employeesCache = employeesCache.filter(x => x.id !== id);
+      else studentsCache = studentsCache.filter(x => x.id !== id);
+      renderTable(type);
+      alert(`Deleted from frontend storage (credentials removed).`);
     } catch(err){
       console.error(err);
-      alert('Failed to delete student.');
+      alert(`Failed to delete ${type}.`);
     }
   }
 });
 
 // ---------- Search ----------
-document.getElementById('searchBtn').addEventListener('click', renderTable);
-searchInput.addEventListener('input', renderTable);
+document.getElementById('searchBtn').addEventListener('click', () => renderTable('student'));
+searchStudentInput.addEventListener('input', () => renderTable('student'));
+document.getElementById('searchEmployeeBtn').addEventListener('click', () => renderTable('employee'));
+searchEmployeeInput.addEventListener('input', () => renderTable('employee'));
 
 // ---------- Init ----------
-window.addEventListener('DOMContentLoaded', loadStudents);
+window.addEventListener('DOMContentLoaded', () => {
+  loadItems('student');
+  loadItems('employee');
+});
 </script>
 </body>
-</html>
+</htm
