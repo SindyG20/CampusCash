@@ -77,47 +77,43 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
         return;
     }
 
+    // ✅ Build registration data object
+    const registrationData = {
+        studentId: document.getElementById("StudentID").value,
+        studentNumber: document.getElementById("StudentNumber").value,
+        fullName: document.getElementById("FullName").value,
+        dateOfBirth: document.getElementById("DOB").value,
+        address: document.getElementById("Address").value,
+        accountType: document.getElementById("AccountType").value,
+        email: document.getElementById("email").value,
+        accountNumber: "AC" + Math.floor(1000000000 + Math.random() * 9000000000),
+        passwordHash: pwd,
+        createdAt: new Date().toISOString()
+    };
+
     try {
         const response = await fetch("http://localhost:5264/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-    studentId: document.getElementById("StudentID").value,
-    studentNumber: document.getElementById("StudentNumber").value,
-    fullName: document.getElementById("FullName").value,
-    dateOfBirth: document.getElementById("DOB").value,
-    address: document.getElementById("Address").value,
-    accountType: document.getElementById("AccountType").value,
-    email: document.getElementById("email").value,
-
-    // ✅ Fix for Account Number
-    accountNumber: document.getElementById("AccountNumber") 
-        ? document.getElementById("AccountNumber").value 
-        : "AC" + Math.floor(1000000000 + Math.random() * 9000000000),
-
-    passwordHash: pwd,
-
-    // ✅ Step 1: Add account creation date
-    createdAt: new Date().toISOString()
-})
-
+            body: JSON.stringify(registrationData)
         });
-        localStorage.setItem("campusCashUser", JSON.stringify(userData));
 
         if (response.ok) {
             alert("✅ Registration successful!");
             document.getElementById("registrationForm").reset();
+            // Redirect to login page
             window.location.href = "/loginFolder/login.html";
         } else {
             const errMsg = await response.json();
-            alert("❌ Registration failed: " + errMsg.message);
+            alert("❌ Registration failed: " + (errMsg.message || "Unknown error"));
         }
     } catch (err) {
         alert("❌ Registration failed: " + err.message);
     }
-   
+
 });
 </script>
+
 
 
 </body>
