@@ -57,7 +57,8 @@ table th {background:#3498db;color:white;}
         <div class="menu-items">
             <div class="menu-item active" data-target="students"><i class="fas fa-user-graduate"></i><span>Managing Students</span></div>
             <div class="menu-item" data-target="employees"><i class="fas fa-users"></i><span>Maintaining Employees</span></div>
-            <div class="menu-item" data-target="appointments"><i class="fas fa-calendar-check"></i><span>Maintaining Appointments</span></div>
+            
+            <a href="Admin-index.html"><i class="fas fa-arrow-left"></i> Logout</a>
         </div>
     </div>
 
@@ -110,29 +111,6 @@ table th {background:#3498db;color:white;}
                 </table>
             </div>
         </div>
-
-        <!-- Appointments -->
-        <div class="content-section" id="appointments">
-            <h2>Manage Appointments</h2>
-            <div class="stats">
-                <div class="stat-box"><h3>Total Appointments</h3><div class="number">0</div></div>
-                <div class="stat-box"><h3>New This Month</h3><div class="number" id="apptNewThisMonth">0</div></div>
-                <div class="stat-box"><h3>Pending Actions</h3><div class="number" id="apptPending">0</div></div>
-            </div>
-            <div class="search-box">
-                <input type="text" placeholder="Search appointments by student, staff, or date...">
-                <button><i class="fas fa-search"></i></button>
-            </div>
-            <button class="action-btn"><i class="fas fa-plus"></i> Add Appointment</button>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr><th>ID</th><th>Student</th><th>Employee</th><th>Date</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -156,27 +134,29 @@ const apiBaseUrl = "http://localhost:5264/api/students"; // 🔹 Your API
 
 async function loadStudents() {
     try {
-        const response = await fetch(apiBaseUrl);
-        const students = await response.json();
+        const response = await fetch(apiBaseUrl, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ studentNumber, name:fullname, email, password })
+});
+const newStudent = await response.json();
 
-        const tbody = document.querySelector("#studentsTable tbody");
-        tbody.innerHTML = "";
+// Add row immediately
+const tbody = document.querySelector("#studentsTable tbody");
+tbody.innerHTML += `
+    <tr>
+        <td>${newStudent.studentNumber}</td>
+        <td>${newStudent.name}</td>
+        <td>${newStudent.email}</td>
+        <td class="action-icons">
+            <button class="edit" onclick="editStudent('${newStudent.studentNumber}')"><i class="fas fa-edit"></i></button>
+            <button class="delete" onclick="deleteStudent('${newStudent.studentNumber}')"><i class="fas fa-trash"></i></button>
+        </td>
+    </tr>
+`;
 
-        // Populate student table
-        students.forEach(student => {
-            let row = `
-                <tr>
-                    <td>${student.studentNumber}</td>
-                    <td>${student.fullname}</td>  <!-- corrected field -->
-                    <td>${student.email}</td>
-                    <td class="action-icons">
-                        <button class="edit" onclick="editStudent('${student.studentNumber}')"><i class="fas fa-edit"></i></button>
-                        <button class="delete" onclick="deleteStudent('${student.studentNumber}')"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `;
             tbody.innerHTML += row;
-        });
+        
 
         // Stats calculation
         const now = new Date();
@@ -200,39 +180,46 @@ async function loadStudents() {
 }
 
 // Add Student
-// Add Student
 document.getElementById("addStudentBtn").addEventListener("click", async () => {
     const studentNumber = prompt("Enter Student Number:");
-    const fullname = prompt("Enter Name:");
+    const name = prompt("Enter Name:");
     const email = prompt("Enter Email:");
     const password = prompt("Enter Password:");
 
-    if(!studentNumber || !fullname || !email || !password) return alert("All fields are required!");
+    if (!studentNumber || !fullname || !email || !password) {
+        return alert("All fields are required!");
+    }
 
     try {
-        await fetch(apiBaseUrl, {
+        const response = await fetch(apiBaseUrl, {
             method: "POST",
-            headers: {"Content-Type":"application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ studentNumber, fullname, email, password })
         });
 
-        // Show temporary success message in table
+        const newStudent = await response.json(); // backend must return the created student
+
+        // Add row immediately to the table
         const tbody = document.querySelector("#studentsTable tbody");
-        const msgRow = document.createElement("tr");
-        msgRow.innerHTML = `<td colspan="4" style="background:#27ae60;color:white;text-align:center;">Student successfully added!</td>`;
-        tbody.prepend(msgRow);
-
-        // Remove message after 3 seconds and reload students
-        setTimeout(() => msgRow.remove(), 3000);
-
-        // Reload table immediately
-        await loadStudents();
+        const row = `
+            <tr>
+                <td>${newStudent.studentNumber}</td>
+                <td>${newStudent.fullname}</td>
+                <td>${newStudent.email}</td>
+                <td class="action-icons">
+                    <button class="edit" onclick="editStudent('${newStudent.studentNumber}')"><i class="fas fa-edit"></i></button>
+                    <button class="delete" onclick="deleteStudent('${newStudent.studentNumber}')"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML("beforeend", row);
 
     } catch (error) {
         console.error("Error adding student:", error);
         alert("Failed to add student. Check console for details.");
     }
 });
+
 
 
 // Delete a student
@@ -253,7 +240,7 @@ async function editStudent(studentNumber) {
         await fetch(`${apiBaseUrl}/${studentNumber}`, {
             method:"PUT",
             headers:{"Content-Type":"application/json"},
-            body: JSON.stringify({ name:newName, email:newEmail })
+            body: JSON.stringify({ fullname:newName, email:newEmail })
         });
         loadStudents();
     } catch(e) { console.error(e); }
